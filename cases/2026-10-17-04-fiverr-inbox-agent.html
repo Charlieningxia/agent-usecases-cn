@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$0 搭一个本地智能体，替你筛掉 Fiverr 私信里的诈骗，每月省约 10 小时 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省时间 · 评分 83 · 状态：已实现（作者自报 3 个月运行数据，未经第三方验证）</div><h1>$0 搭一个本地智能体，替你筛掉 Fiverr 私信里的诈骗，每月省约 10 小时</h1><div class="meta">作者/出处：Sam Hartley（dev.to 原文）<br>原文：<a href="https://dev.to/samhartley_dev/i-replaced-25-hours-of-daily-busywork-with-a-0-ai-agent-setup-13ad" rel="nofollow noopener">https://dev.to/samhartley_dev/i-replaced-25-hours-of-daily-busywork-with-a-0-ai-agent-setup-13ad</a><br>日期：2026-10（原文近期更新） · 工具：本地大模型 + Python 脚本 + cron 定时 + 无头浏览器 + Telegram 提醒<br>成本：$0（用一台本来就 24 小时开着的 Mac 跑本地模型） · 耗时：搭建约数小时，之后全自动</div><div class="quick"><strong>速览卡</strong>｜分类：省时间 · 结果：每月省约 10 小时，诈骗识别自报 100%、零误报（作者自报）· 成本：$0 · 耗时：搭建数小时，之后全自动 · 工具：本地大模型 + 脚本</div>
+<h2>一句话</h2>
+<p>在 Fiverr 上卖服务，每天要花 20 分钟翻私信、一半还是诈骗 — 他把这活交给一个本地跑的智能体：每小时自动扫一遍，真客户秒发 Telegram 提醒，诈骗静默记录，每月省出约 10 小时。</p>
+<h2>原作者是怎么做的</h2>
+<p>整个系统就四层，没有玄学：</p>
+<ol>
+<li><strong>调度层</strong>：cron 定时触发任务。</li>
+<li><strong>感知层</strong>：脚本去取数据（邮件、Fiverr 私信、天气、日历）。</li>
+<li><strong>推理层</strong>：本地大模型只负责“理解和判断”这一件事。</li>
+<li><strong>行动层</strong>：只做一件事 — 给他发 Telegram 消息。从不自动回复、从不替他做决定。</li>
+</ol>
+<p>Fiverr 私信监控的具体流程：无头浏览器每小时打开收件箱 → 读新消息 → 本地模型逐条判定 LEGITIMATE（真客户）或 SCAM（诈骗）并给一句理由 → 真客户立刻 Telegram 提醒并附预览，诈骗只写日志、不打扰。</p>
+<h2>结果（标注状态）</h2>
+<p>作者自报 3 个月运行结果（事后人工核对过，未经第三方验证）：</p>
+<ul>
+<li>诈骗识别率 100%，零误报（把真客户错杀）</li>
+<li>每月省约 10 小时</li>
+<li>回复真客户变快了 — 因为不用再在垃圾里翻</li>
+</ul>
+<h2>可复用的提示词结构</h2>
+<blockquote>
+<p>判断这条消息是真实业务咨询还是诈骗。</p>
+<p>诈骗指标：要求转到站外联系（WhatsApp 等）、模板化问候后立刻抛出大项目、语气紧迫但语法混乱、要求脱离平台沟通。</p>
+<p>消息内容：{message}</p>
+<p>只回答：LEGITIMATE 或 SCAM，并用一句话说明理由。</p>
+</blockquote>
+<h2>中国读者怎么迁移</h2>
+<p>判定逻辑可以原样搬到任何平台的私信：Upwork、闲鱼、小红书私信、各类接单群 — 把“诈骗指标”换成本平台的常见骗术（先交保证金、引导加微信私下交易、发不明链接）即可。架构也不依赖 Fiverr：定时抓取 → 本地模型判断 → 只提醒不代答，这个“只读 + 只提醒”的克制设计，恰恰是它敢全自动跑 3 个月的原因。</p>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>平台条款</strong>：无头浏览器自动读取私信可能触碰平台的自动化规则，有账号风险；量小、低频、只读不发，能降低但不消除风险。</li>
+<li><strong>会话安全</strong>：脚本要持有你的登录状态，机器和凭据的安全就是账号的安全。</li>
+<li><strong>别迷信 100%</strong>：100% 是他这 3 个月、他这个消息量下的自报数据；诈骗话术会进化，判定提示词要定期拿新样本复测。漏检一条诈骗的代价通常只是多花一分钟，误杀一个真客户才是真损失 — 拿不准时应按“真客户”提醒。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
