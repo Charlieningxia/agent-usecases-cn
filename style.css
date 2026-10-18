@@ -1,0 +1,10 @@
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:760px;margin:0 auto;padding:24px 16px 64px;line-height:1.75;color:#1a1a1a}
+a{color:#0b5cad;text-decoration:none} a:hover{text-decoration:underline}
+.brand{font-size:22px;font-weight:700;color:#1a1a1a}
+.tagline{color:#555} .meta{color:#666;font-size:14px}
+.card{border:1px solid #e3e3e3;border-radius:10px;padding:16px 20px;margin:16px 0}
+.subscribe{background:#f4f8ff;border-radius:10px;padding:8px 20px 16px}
+blockquote{background:#fafafa;border-left:3px solid #ccc;margin:12px 0;padding:8px 16px}
+.quick{background:#fffbe6;border:1px solid #ecd97a;border-radius:8px;padding:10px 14px;margin:12px 0;font-size:15px}
+footer{margin-top:48px;color:#888;font-size:13px;border-top:1px solid #eee;padding-top:12px}
+code{background:#f2f2f2;padding:1px 5px;border-radius:4px}
