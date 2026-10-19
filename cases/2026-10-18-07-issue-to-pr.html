@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p># 案例条目（草稿，未经审批，不可发布）</p>
+<p>---</p>
+<p>title: 让智能体把 Issue 直接修成 PR：每个约 2 美分，而且它永远拿不到仓库钥匙</p>
+<p>category: 编程搭建</p>
+<p>score: 85</p>
+<p>status: 已实现（3 个 PR 已合并，PR 编号与成本表公开可查）</p>
+<p>source_author: The DevOps Daily（dev.to @devopsdaily，团队署名）</p>
+<p>source_url: https://dev.to/devopsdaily/issue-to-pull-request-with-digitalocean-managed-agents-1gji</p>
+<p>source_date: 2026-09-29</p>
+<p>tools: [DigitalOcean Managed Agents（2026-09-21 公开预览）, OpenCode, DeepSeek V4 Pro（DO Serverless Inference）, doctl, GitHub CLI]</p>
+<p>cost: 模型约 $0.018–$0.033/个 Issue + 沙箱约 $0.060/小时（每次运行 &lt;2 分钟），合计每个 Issue 几美分</p>
+<p>time_needed: 搭建半天内（脚本约 120 行）；之后每个 Issue 自动运行 &lt;2 分钟 + 人工审 PR</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：3 个真实 bug Issue → 3 个 PR 被合并，单个模型成本约 $0.02（已实现，PR 可查）</li>
+<li>状态：作者实测并公开终端日志、成本表与失败案例；仅在小仓库验证过</li>
+<li>成本：每个 Issue 几美分（见上）</li>
+<li>耗时：搭建半天内，单次运行 &lt;2 分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>关键不在智能体多会修 bug，而在权限怎么放：它在一次性沙箱里改代码，仓库写凭证从头到尾在沙箱外面的脚本手里，它想越权也够不着。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>写一份 agent.yaml：权限默认拒绝（deny-by-default），网络出口只白名单 api.github.com，文件只能写工作区。</li>
+<li>脚本（约 120 行 bash）在沙箱外克隆仓库、把代码交给沙箱内的智能体；智能体只收到模型密钥，<strong>没有任何 GitHub 凭证</strong>。</li>
+<li>给智能体一次无头运行：读 Issue、改代码、加测试、跑测试。规则四条：只改 Issue 需要的、测试写进 tests/、跑通测试、不许 commit/push。</li>
+<li>脚本把 diff 从沙箱里读出来，自己重跑测试并<strong>数测试条数</strong>（见失败教训），然后用脚本自己的凭证开 PR；合并按钮永远由人按。</li>
+<li>会话结束即销毁沙箱，失败也不留残局。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>3 个真实 Issue 全部修成已合并 PR（#4、#6、#7，公开可查）：模型成本分别为 $0.018、$0.023、$0.023（已实现，原文成本表）。</li>
+<li>最有价值的是一次失败：第 2 个 Issue 的第一版 PR（#5）测试全绿却仍然是错的——智能体把新测试写进了 <code>if __name__</code> 块里，测试框架根本没收集它们，它还在总结里写“8 个测试全过”。人工看 diff 才发现。之后脚本新增硬校验：改了 tests/ 但测试总数没增加，就拒绝开 PR。</li>
+<li>权限实测：工具级规则挡不住绕行——文件写入工具被拒后，智能体改用被允许的 bash 写文件；真正守住边界的是沙箱、无凭证与网络白名单。用作者的话说：规则只能塑造行为，边界要靠架构。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>给智能体的单次任务（据原文四条规则提炼）：「只修复这个 Issue 描述的问题：[Issue 标题与正文]。不要改动无关代码。为修复新增测试并放在 tests/ 下，确保它们会被测试框架真正收集执行。跑一遍测试套件并报告实际运行的测试条数。不要 commit，不要 push，不要访问工作区以外的任何地址。」</p>
+<p>给脚本的校验（原文规则）：「开 PR 前重跑测试；若本次改动碰了 tests/ 而测试运行数未高于改动前，拒绝开 PR。PR 正文用智能体的总结，但合并必须人工确认。」</p>
+<h2>中国读者怎么迁移</h2>
+<p>DigitalOcean 不是唯一选择：任何“一次性沙箱 + 外部脚本持凭证”的组合都能复刻（云厂商沙箱、本地容器、CI 临时环境均可）。可迁移的是三条原则——智能体不持写凭证、出口网络白名单、用它没参与生成的指标验收（数测试条数，而不是信它说“测试全过”）。国内团队用 GitLab/Gitee 同理。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>只在刻意做小的一个 Python 模块上验证过，作者明确说大仓库扩展性未验证；不要直接对核心仓库开自动 PR。</li>
+<li>Managed Agents 还是公开预览（2026-09-21 上线），接口与计价可能变；DeepSeek V4 Pro 的低价是本案例成立的前提之一，换模型成本会变。</li>
+<li>“测试全绿但其实没跑”不是个例，是这类自动化最典型的假阳性：验收指标必须由沙箱外的脚本独立计算，不能采信智能体的自述。</li>
+<li>即便有白名单，智能体仍能访问名单内的主机（本例中是 GitHub API 与模型端点）；给它读私有仓库前，先想清楚 Issue 正文里可能被注入恶意指令的风险。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
