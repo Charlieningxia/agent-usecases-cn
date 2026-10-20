@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体把招聘帖读成数据集：20 期 HN 帖子解析出 9,194 个岗位的结论 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">调研数据 · 评分 73 · 状态：已实现（分析结论已发布，数字可按公开方法复算）</div><h1>让智能体把招聘帖读成数据集：20 期 HN 帖子解析出 9,194 个岗位的结论</h1><div class="meta">作者/出处：Arthur Takeda<br>原文：<a href="https://dev.to/arthur_taken/hn-who-is-hiring-in-2026-a-third-fewer-companies-and-2-job-seekers-for-every-one-470f" rel="nofollow noopener">https://dev.to/arthur_taken/hn-who-is-hiring-in-2026-a-third-fewer-companies-and-2-job-seekers-for-every-one-470f</a><br>日期：2026-10-07 · 工具：LLM（把自由文本解析为固定字段）、 Hacker News 公开帖子<br>成本：未给出（公开数据 + LLM 调用，量级为个人可承担的小额 API 费，原文未列） · 耗时：约半天（一次性任务）</div><h2>速览卡</h2>
+<ul>
+<li>分类：调研数据</li>
+<li>结果：13 期招聘帖（9,194 个岗位）+ 7 期求职帖（3,586 名候选人）全部结构化并得出结论（已实现）</li>
+<li>状态：结论已公开发布；数据源公开，任何人可按同一方法复算</li>
+<li>成本：未给出</li>
+<li>耗时：约半天的一次性活，适合“30 分钟上手、半天出结果”的快赢位</li>
+</ul>
+<h2>一句话</h2>
+<p>论坛帖子是免费的一手市场数据，只是全是自由文本没法统计——让 LLM 按固定字段逐条解析，就能把“感觉行情不好”变成可引用的数字。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>选定数据源：Hacker News 每月的《Who is hiring?》与《Who wants to be hired?》两个固定帖（发帖人多为招聘经理本人，信息带薪资、远程与技术栈）。</li>
+<li>抓取 13 期招聘帖（2025-10 至 2026-10，共 3,909 家公司、9,194 个岗位）与 7 期求职帖（2026-04 至 10 月，3,586 名候选人）的全部顶层评论。</li>
+<li>让 LLM 把每条评论解析进固定 schema：岗位、级别、远程/现场、薪资区间、签证、技术栈——字段先定死，再批量跑。</li>
+<li>对结构化结果做统计与同比：公司数、岗位数、求职者数、远程占比、薪资中位数逐月对比，写成带结论的公开分析。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>招聘端：发帖公司从 2025 年 Q4 的约 361 家/月降到 2026 年 Q3 的约 240 家/月（-33%），岗位数同步从约 850 降到 577/月。</li>
+<li>求职端：求职帖从 4 月 384 条涨到 9 月 553 条（+44%）；2026 年 9 月供需比约 2.2 名求职者/1 家招聘公司，10 月初一度 2.6。</li>
+<li>其他：远程岗位只占 33–42%，而约一半求职者只接受远程；标注薪资的岗位从约 23% 升到约 32%；美国软件工程师薪资中位区间全年稳定在 $177k–$195k。以上均为已发布结论，数据源公开、可复算。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>「下面是一条招聘帖原文。请只按这个 schema 输出 JSON，不要补充原文没有的信息，缺失字段写 null：{role, seniority, remote: remote|hybrid|onsite|null, salary_min, salary_max, currency, visa_sponsorship: true|false|null, tech_stack: []}。薪资只抄原文数字，不换算、不猜测。输出前自检：每个字段都能在原文里找到出处，找不到就改回 null。」（schema 与约束据原文方法反推，非原文照录）</p>
+<h2>中国读者怎么迁移</h2>
+<p>同样的活可以搬到任何公开文本池：脉脉/小红书的行业帖、BOSS 直聘公开岗位页（注意平台条款）、GitHub issue、产品评论区。迁移要点是先定字段再解析——字段就是你的研究问题；以及让模型“找不到就写 null”，这是这类批量解析不胡编的关键约束。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>LLM 解析会有误判（讽刺帖、跨行格式、薪资玩笑），结论是趋势级可用、个条不可尽信；重要数字要抽样回原文核对。</li>
+<li>薪资中位数只统计“写了薪资”的岗位（约三成），存在自选择偏差，引用时必须带这个限定。</li>
+<li>抓取与再发布要遵守目标站点的条款与 robots 约定；本例用的是 HN 公开帖与官方可访问页面，换平台前先确认。</li>
+<li>成本原文未给出：上万条评论的 LLM 调用不是零成本，照做前先用 100 条估算单价再全量跑。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

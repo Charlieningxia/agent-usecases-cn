@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体先审智能体写的代码：一轮通过率从 65% 升到 78%（Anthropic 自报） · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 80 · 状态：作者自述，未经审计（机构自报内部数据，无样本量，未经独立核查）</div><h1>让智能体先审智能体写的代码：一轮通过率从 65% 升到 78%（Anthropic 自报）</h1><div class="meta">作者/出处：Anthropic Claude Code 团队（Addy Osmani、Morgan Westlee Lunt、Qing Wang）；小团队改写版作者见 dev.to 原文<br>原文：<a href="https://claude.dev/blog/solving-code-review-at-anthropic/" rel="nofollow noopener">https://claude.dev/blog/solving-code-review-at-anthropic/</a><br>日期：2026-10-15（Anthropic 原帖）；改写版 2026-10-18 前后 · 工具：Claude Code、 Code Review（托管版）、 REVIEW.md、 GitHub 分支保护与 CI<br>成本：托管版 Code Review 仅 Team / Enterprise 计划可用，原文未给单价，须显眼标注；本地 /code-review 任意计划可用（按 Claude 用量计费） · 耗时：小团队版落地：必备三层约半天到一天；单写一份 REVIEW.md 约 30 分钟</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：一轮通过率 65%→78%、五轮以上占比 8.9%→1.5%、平均评审轮次 2.08→1.32（Anthropic 自报，未经审计）</li>
+<li>状态：机构内部数据自报，无样本量、无独立复核；结构与步骤完整公开</li>
+<li>成本：托管评审为付费企业功能（见 frontmatter）；本地版按用量</li>
+<li>耗时：小团队先抄三层，约半天起步</li>
+</ul>
+<h2>一句话</h2>
+<p>当约 90% 的代码由智能体写出后（Anthropic 自报口径），逐行人审先撑不住的是注意力——他们把评审拆成七层，让机器先筛、人只按风险档位出现，并用三轮上限治住了“评审无限打转”。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>提交前自验：智能体先跑测试/构建/截图对比，再由一个全新上下文的子智能体审 diff——写的人和审的人不共享记忆。</li>
+<li>每个 PR 过 AI 评审：多个智能体并行找问题，验证者投票，只有票数够的发现才贴出来，并标 Important / Nit / Pre-existing；另有可阻断合并的安全评审与全套自动检查（lint、类型、测试、构建）。</li>
+<li>人按风险出现：分类器按改动内容定档——低风险（文档、文案、带开关的新增）自动检查全绿即可合；中风险 1 人；高风险 2 人。智能体的批准永远不算人头，指挥智能体的人算一名评审员，一次批准只对一个提交有效。</li>
+<li>合并队列 + 功能开关 + 分阶段发布，出事靠关开关回滚，不靠紧急发版。</li>
+<li>关键教训：曾有一个 PR 一夜跑了 50 多轮评审。加上“三轮上限”（超过三轮就请作者停下来重想）后，一轮通过率才从 65% 升到 78%（Anthropic 自报）。</li>
+<li>小团队版（dev.to 改写者建议，非 Anthropic 实测）：只抄其中五层，优先级是阻断检查、风险分级、回滚演练；用一份短 REVIEW.md 写清“本仓库什么算事故、每条发现必须给文件行号、最多报 3 条 Nit、哪些路径跳过”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>2026 年 6—9 月，Claude Code 代码库合并 PR 数翻倍以上，同时需要回滚的占比下降 40% 以上（Anthropic 自报，未经审计）。</li>
+<li>一轮通过率 65%→78%；需要五轮以上的 PR 从 8.9% 降到 1.5%；平均评审轮次 2.08→1.32（同上口径，无样本量）。</li>
+<li>规模背景：其大仓库日落地变更从 5 月约 2,500 涨到 9 月 30,000 以上（同上口径）——这是“为什么必须分层”的背景，不是读者能复现的目标。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（REVIEW.md 起始结构，据原文公开的起始模板提炼，非 Anthropic 内部原文）</p>
+<p>「# REVIEW.md ## 本仓库什么算事故：- 收错钱/重复收费 - 返回不属于该用户的数据 - 锁大表的迁移 ## 报告规则：- 每条发现必须给出文件与行号，给不出就丢弃 - 最多报 3 条 Nit，优先报 0 条 - 每条标注：Important / Nit / Pre-existing - 不评论格式，格式归 linter ## 跳过：generated/<strong>、快照与锁文件、docs/</strong> ## 必查：auth/、billing/、migrations/、工作流配置；新增环境变量；删测试却没补替代」</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内团队用 GitLab/Gitee/自建 Git 同样适用：分层思想与托管产品无关——本地用 Claude Code 的 /code-review 或自有 CI 跑评审 job、把“安全检查 job 必须绿”设为合并门槛、按路径分级人审即可。先只做三件：必填检查、REVIEW.md、一键回滚演练。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>全部效果数字为 Anthropic 自报，无样本量、无独立复核，只能当方向、不能当基准承诺；本站引用时必须同屏带状态。</li>
+<li>官方文档明说：托管评审本身从不批准或阻断 PR，且“评审无发现”不等于代码无 bug；想要阻断效果必须自己把 CI job 设为必过项。</li>
+<li>零人审档位风险真实存在：原帖自承其内部尚缺“指标恶化时自动收紧审批”的熔断，小团队应把低风险定义收窄，并每周抽查自动合并清单。</li>
+<li>托管版成本随 PR 量与评审深度涨，原文未给单价，开启前须查官方价格页。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
