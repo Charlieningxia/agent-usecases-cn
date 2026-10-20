@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体先给岗位打分再决定投不投：评估 740 个岗位，只投 68 个，拿到 1 个 offer · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">生活办事 · 评分 76 · 状态：已实现（作者自述，工具开源、漏斗数字写在项目 README 与作者案例页，可核）</div><h1>让智能体先给岗位打分再决定投不投：评估 740 个岗位，只投 68 个，拿到 1 个 offer</h1><div class="meta">作者/出处：Santiago Fernández de Valderrama Aparicio（GitHub: santifer）<br>原文：<a href="https://career-ops.org/" rel="nofollow noopener">https://career-ops.org/</a><br>日期：2026-04（项目创建，持续更新；v1.35.0 于 2026-10-01 发布） · 工具：Career-Ops（MIT 开源）、 Claude Code（也可换 Codex/OpenCode 等 CLI）、 Node.js<br>成本：Career-Ops 本身免费；需要一个 AI 编程 CLI——Claude Code 需付费 Claude 计划或 API Key，也可走 OpenCode 的免费提供方（原文口径） · 耗时：搭建约 1-2 小时（首次要喂入 CV 与偏好）；之后每批岗位评估约数十分钟，投递永远人工按提交</div><h2>速览卡</h2>
+<ul>
+<li>分类：生活办事 / 求职</li>
+<li>结果：评估 740 个岗位 → 投递 68 个 → 12 个面试流程 → 1 个 offer（Head of Applied AI）（已实现，作者自述）</li>
+<li>状态：漏斗数字公开在项目文档与作者个人站；工具本身约 74,000 星（chen.media 2026-10 中旬报道口径，数字变动快，发布前需再核当日星数）</li>
+<li>成本：工具免费；AI CLI 成本取决于所选提供方</li>
+<li>耗时：搭建 1-2 小时，之后批量运行</li>
+</ul>
+<h2>一句话</h2>
+<p>求职最浪费时间的不是投递，是把时间花在不匹配的岗位上——这个开源系统先让智能体逐个给岗位打分，低于 4.0/5 直接劝退，只为值得投的岗位定制简历，而且永远不替你按提交。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>作者先为自己的求职搭了这套系统：把 CV、求职意向和明确拒绝的条件通过对话喂给智能体，让它先“认识你”。</li>
+<li>扫描模式定期检查 100 多家目标公司的招聘页（Greenhouse/Ashby/Lever 等），发现新岗位先验证链接还活着、岗位还开着。</li>
+<li>每个岗位按固定报告结构对着真实 CV 打 1-5 分；低于 4.0/5 明确建议跳过（可人工推翻，但系统默认劝退）。</li>
+<li>对值得投的岗位：生成 ATS 可读的定制 CV PDF、求职信草稿和申请表每个开放问题的答案草稿，并登记进本地追踪表。</li>
+<li>最后一步永远是人工：作者逐个审阅、修改、自己按提交——系统没有任何自动投递动作。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>作者本人漏斗：740 个岗位评估 → 68 次投递 → 12 个面试流程 → 1 个 offer（Head of Applied AI）（已实现，作者自述）。</li>
+<li>作者拿到 offer 半年后离职，全职维护这个开源项目（作者自述）。</li>
+<li>注意样本只有作者 1 人，且其背景是 16 年产品/创业经历；漏斗是“过滤效率”的证据，不是“用了一定拿 offer”的承诺。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>「这是我的 CV 和我想找/拒绝的岗位类型：[粘贴]。请逐个处理下面这些岗位链接：先确认岗位还开放，再按 1-5 分对着我的 CV 打分并说明理由；低于 4.0 分的只给一句劝退理由，不要写任何材料；4.0 分及以上的，生成一份针对该岗位的定制 CV 要点和申请问题答案草稿。不要替我提交或发送任何东西，全部停在草稿等我确认。」（据项目 README 的模式说明反推，非原文照录）</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内没有 Greenhouse/Ashby 这套 ATS 生态，但“先打分过滤、再定制、人工提交”的顺序可搬到 BOSS 直聘/猎聘/公司官网岗位页：让智能体先对着你的简历给岗位列表打分，只对高分岗位逐个改简历。注意平台条款——只做读取与打分，不做自动投递/自动打招呼，既合规也避免海投伤账号。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>与本站已发布的 JobAgent（258 投递→8 面试→3 offer）同属求职题材：区别是 JobAgent 偏“读完广告再投递”，Career-Ops 偏“打分过滤、永不代投”。是否同题材连发，请审批时一并决定；如介意，可把本条压后一期。</li>
+<li>效果强依赖喂入的 CV 与偏好质量，作者明确说“最初几次评估不会太好”，需要一周左右的磨合。</li>
+<li>岗位页抓取受目标站点条款与反爬限制；批量扫描前先确认频率与方式合规。</li>
+<li>星数、版本号等数字变动快，发布前必须按当日 GitHub 页面再核一次，不沿用本条数字。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

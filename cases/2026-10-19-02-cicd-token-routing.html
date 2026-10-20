@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体别再亲自跑测试和部署：每周 50-100 次烧 token 的 CI 调用降到约 0 次 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 84 · 状态：已实现（作者自述，系统在真实项目部署中运行；节省为调用次数口径，非账单金额）</div><h1>让智能体别再亲自跑测试和部署：每周 50-100 次烧 token 的 CI 调用降到约 0 次</h1><div class="meta">作者/出处：Frederick Wong<br>原文：<a href="https://dev.to/frederick_wong_76/reducing-ai-token-costs-by-80-how-we-built-a-cicd-layer-that-pays-for-itself-ep7" rel="nofollow noopener">https://dev.to/frederick_wong_76/reducing-ai-token-costs-by-80-how-we-built-a-cicd-layer-that-pays-for-itself-ep7</a><br>日期：2026-10-16 · 工具：GitHub Actions（可复用 workflow）、 GitHub Copilot CLI、 Kiro（AI IDE）、 AWS CDK + OIDC、 steering 文件<br>成本：Copilot CLI 约 1 credit/次（约 $0.01）；GitHub Actions 按常规额度；无新增订阅 · 耗时：共享 workflow 仓库搭建约几小时；之后每个新项目接入只需 5 行文件 + 一次 push</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建 / 省钱账单</li>
+<li>结果：智能体跑 CI/CD 的调用 50–100 次/周 → 约 0 次；单次交互 6–10 次工具调用 → 0（自动）或约 $0.01（手动触发）（已实现，作者自述）</li>
+<li>状态：作者称系统已上线处理真实部署；原文标题的“省 80%”是作者的概括口径，正文表格给的是调用次数从 50–100/周降到约 0，本站只引用表格数字，不引用 80% 这个概括数</li>
+<li>成本：约 $0.01/次轻任务调用起</li>
+<li>耗时：搭建几小时，接入新项目几分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>用智能体跑测试、部署，就像请顾问去按电梯按钮——他把这类“不需要思考的活”全部交还给流水线，智能体只做需要推理的事，账单立刻降下来。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先算账：发现智能体每次“跑个测试”要读结构、找命令、执行、读输出、解读，共 6–10 次工具调用，而这件事本质上不需要任何推理。</li>
+<li>建一个共享 workflow 仓库：把跑 pytest、校验 CDK、部署 CDK、同步 S3、定时监控写成 5 个可复用 GitHub Actions workflow；每个项目只写 5 行调用文件，push 后自动跑，结果看 GitHub 界面，智能体零参与。</li>
+<li>部署改走 OIDC 无密钥认证：Actions 向 AWS 申请 1 小时临时凭证，不在仓库里存任何长期密钥。</li>
+<li>中间层分流轻任务：解释函数、写提交信息、触发部署这类小事，用别名走 GitHub Copilot CLI（约 1 credit、约 $0.01/次），不惊动完整的智能体会话；他实测 GitHub 官方 MCP 工具集会把 76 个工具的 schema 全塞进上下文，单次贵 5–7 倍，弃用，改用 <code>gh</code> 命令行达到同样效果。</li>
+<li>用 steering 文件立规矩：在每个项目放一份自动加载的政策文件，写明“被要求跑测试/部署/校验时，去触发 workflow，不要本地执行”——只是建议、不拦截，但零运行成本就改变了智能体的默认行为；他试过用钩子拦截命令，反而每次都烧 token 判断要不要介入，已弃用。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>Kiro 为 CI/CD 产生的工具调用：50–100 次/周 → 约 0 次（已实现，作者自述）。</li>
+<li>单次 CI 交互成本：6–10 次工具调用 → 0（自动触发）或 1 个 Copilot credit（约 $0.01，手动触发）。</li>
+<li>CI 反馈时间：手动触发的分钟级 → push 后自动运行的秒级；新项目接入：数小时手工配置 → 5 行文件 + 一次 push。</li>
+<li>附带收益：第一个项目接入时，CI 立刻暴露了本地部署一直掩盖的既存测试失败和缺失依赖。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>「（写入项目 steering 文件）当用户要求[跑测试/部署/校验]时，不要在本地执行，去触发对应的 GitHub Actions workflow：[workflow 名]。只有用户明确说“本地跑”时才本地执行。轻任务（解释单个文件、写提交信息、查日志）走 [轻量 CLI 别名]，不要开启完整智能体会话。复杂的多文件改动才用完整智能体。」（据原文 steering 文件原句与分流表反推组合，非整段原文照录）</p>
+<h2>中国读者怎么迁移</h2>
+<p>思路与平台无关：国内用 GitLab CI、Gitee 流水线、云效或 Jenkins 都一样——先盘点智能体每周在“跑命令、读输出”上烧了多少次调用，把其中不需要推理的全部固化成流水线，再给智能体留一份“政策文件”改默认行为。哪怕只做第一步（把跑测试交还 CI），也是当天见效的快赢。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>节省口径是“调用次数”，不是账单金额：作者未给出改造前后的实际美元账单，标题的 80% 不要当金额节省引用。</li>
+<li>前提是你已经在用 AI 编程工具高频跑 CI/CD；低频使用者省不出可观数字。</li>
+<li>steering 文件只是“建议不拦截”，智能体仍可能偶尔本地执行，需要抽查；涉及生产部署时，OIDC 权限范围要按最小授权配置（原文踩过 2026-07-15 GitHub 改 OIDC claim 格式导致 1 小时调试的坑，平台变更监控不能省）。</li>
+<li>作者的 ECUPSE 本身是“由自治智能体运营的公司”实验项目（原文文末声明），利益背景已在此标注。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

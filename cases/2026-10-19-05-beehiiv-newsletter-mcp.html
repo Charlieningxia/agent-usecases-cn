@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体接管你的期刊数据与初稿：每期写作从 3 小时降到 90 分钟 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">内容营销 · 评分 78 · 状态：已实现并持续运行（第三方报道核实流程，当事人自述效果）</div><h1>让智能体接管你的期刊数据与初稿：每期写作从 3 小时降到 90 分钟</h1><div class="meta">作者/出处：当事人 Brandon Smithwrick；报道者 Chenell Basilio（Growth In Reverse）<br>原文：<a href="https://growthinreverse.com/brandon-claude-mcp/" rel="nofollow noopener">https://growthinreverse.com/brandon-claude-mcp/</a><br>日期：2026-05-04 · 工具：Claude、 Beehiiv MCP、 Google Sheets、 Notion、 Wispr Flow（语音输入）、 Slack<br>成本：Claude 订阅 + Beehiiv 账户（原文未列具体金额）；Beehiiv MCP 当时为 beta · 耗时：搭建约半天；之后每期写作约 90 分钟（原 3 小时）</div><h2>速览卡</h2>
+<ul>
+<li>分类：内容营销 / 省时间行政</li>
+<li>结果：每期 newsletter 写作 3 小时 → 90 分钟（已实现，持续运行）</li>
+<li>状态：当事人自述效果、报道者核实了完整工作流；非独立审计</li>
+<li>成本：未给出具体金额（见 frontmatter）</li>
+<li>耗时：搭建约半天，之后每期省约 90 分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>写期刊最耗时的不是写，是“不知道写什么”和“对着空白页发呆”——他让智能体先把读者数据变成选题依据，再把口述变成初稿，自己只当编辑。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>把 Claude 通过 Beehiiv 的 MCP 接到自己的期刊账户，数据直读，不再导 CSV、复制粘贴。</li>
+<li>让 Claude 在 Google Sheets 里建一个自更新看板：给每期打分，汇总读者画像（性别、年龄、职业、地区）与留存，每周随新刊自动更新。</li>
+<li>写作侧另起一条流水线：他在 Notion 里用 Wispr Flow 口述想法，把状态下拉选成“Input ready”，后台的 Claude 智能体自动开工。</li>
+<li>智能体的“文风训练材料”是他过往的期刊原文、SOP 和看板里的选题规律；产出包括标题候选、正文初稿与主题行，完成后在 Slack 里 ping 他。</li>
+<li>他本人只做最后一步：审稿、改稿、定稿——用他的话说，从“作者”升成了“编辑”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>每期写作时间从 3 小时降到 90 分钟（已实现并持续运行，当事人自述）。</li>
+<li>附带发现：此前他根本不知道自己的读者留存率是 85.3%，也不知道读者画像细节——这些数据后来被他用于给赞助商报价。</li>
+<li>注意：原文对读者女性占比有 63%/68% 两处不一致的数字，本站不引用该项，只引用写作时长与留存率两项。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>「连接 [期刊平台] 的数据后，先给我建一张每周自动更新的看板：每期按 [打开率/点击/留存] 打分，并汇总读者画像。写作时，我会在 [笔记工具] 里口述想法并标记 [触发状态]；你收到后，按我过往 [N] 期原文的语气和结构写初稿，附 3 个标题候选与 1 条主题行。只写初稿，不要替我发布；写完在 [通讯工具] 里通知我审稿。」（结构据原文步骤反推，非原文照录）</p>
+<h2>中国读者怎么迁移</h2>
+<p>Beehiiv 在国内用得少，但结构可搬：公众号/小报童/Substack 的后台数据 + 一个能读数据的智能体 + 口述转初稿。关键不是某个 MCP，而是顺序——先让智能体把“读者到底看什么”变成看板，再让它写，否则只是更快地写没人看的东西。本站自己的期刊生产也在用同一逻辑（先数据、后初稿、人工定稿）。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>Beehiiv MCP 当时为 beta，接口与权限可能变化；把期刊账户交给智能体前，先确认它只有读取与起草权限，发布动作留给人工。</li>
+<li>效果数字为当事人自述、无独立审计；“砍半”依赖他原本就有稳定的 SOP 与过往语料，新手从零搭不出同样效果。</li>
+<li>口述转初稿容易把口头禅与事实错误一起带进稿子，编辑环节不能省；涉及赞助报价的数据（如留存率）对外引用前要自己再核一遍。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
