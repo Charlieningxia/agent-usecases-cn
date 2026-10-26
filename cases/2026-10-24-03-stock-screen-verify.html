@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体一句话筛 S&amp;P 500，再逐行对账验它没算错</p>
+<p>category: 调研数据</p>
+<p>score: 74</p>
+<p>status: 仅测试（无投资收益、无省时数字；作者原文明确“Nothing here is investment advice”）</p>
+<p>source_author: Daniel Oliveira（dev.to 账号名推断，正文未署全名，待补核）</p>
+<p>source_url: https://dev.to/daniel_oliveira_4bd55d35d/how-to-screen-stocks-in-plain-english-with-an-ai-agent-then-check-what-it-found-1nnj</p>
+<p>source_date: 2026-10-21（文中明确的工具调用日期；dev.to 页未另显示发布日）</p>
+<p>tools: [Claude / ChatGPT / Claude Code, Equibles MCP]</p>
+<p>cost: Equibles 免费档每天 100 次请求（原文口径）；超出免费档的费用原文未列</p>
+<p>time_needed: 读者照做约 1 天内可上手（含接 MCP、跑两次筛选、做一次对账）</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：调研数据</li>
+<li>结果：内幕买入筛出 12 只（波士顿科学 BSX 90 天净内幕买入 $9,486,038，与 6 行 Form 4 重算基本一致）；成长合理价筛出 30 只（仅测试，无投资收益）</li>
+<li>状态：仅测试（作者自测，无任何投资收益、无省时数字；原文明确不是投资建议）</li>
+<li>成本：免费档内 $0（每天 100 次请求）</li>
+<li>耗时：1 天内可上手</li>
+</ul>
+<h2>一句话</h2>
+<p>不用填几十个筛选框：用一句话让智能体筛 S&amp;P 500，再逼它把原始 Form 4 行摊开、重算一遍，验出“汇总数字”里藏着的 $4.7M 非公开市场交易。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先接工具：在 Claude 里走 Customize → Connectors → Discover 搜 Equibles 并授权；在 Claude Code 里用 <code>claude mcp add --transport http equibles https://mcp.equibles.com/mcp</code> 接入。免费档每天 100 次请求。</li>
+<li>第一筛（内幕买入）：一句话——“Using Equibles, which S&amp;P 500 stocks had more than $1M of net insider buying in the last 90 days?”智能体调 <code>ScreenStocks</code>（index=sp-500，minNetInsiderBuy=1000000，sortBy=insiderbuy），筛出 12 只，前列为 PepsiCo $23,281,715、Uber $13,305,343、Intel $9,999,985、波士顿科学 BSX $9,486,038。</li>
+<li>对账验真：对 BSX 追问“Show Boston Scientific&#x27;s insider transactions since 20 July”，拿到 6 行 Form 4 买入行——2026-08-25 Susan E. Morano 买入 2,040 股 $100,408；2026-08-05 David C. Habiger 买入 2,100 股 $99,937；2026-08-04 Habiger 买入 140 股 $6,802；2026-08-03 Michael F. Mahoney 买入 186,240 股 $9,001,408；2026-08-03 Habiger 买入 1,042 股 $50,084；2026-07-31 Edward J. Ludwig 买入 5,000 股 $227,400——合计约 $9,486,038，与筛选数字基本一致（差 1 美元为四舍五入）。</li>
+<li>验出陷阱：同一窗口还有 4 行标为 Discretionary、合计 $4.7M 的交易，来自 CFO、高管与首席会计官等，那是员工福利计划内的交易代码，不是公开市场买入，筛选器把它排除了；但如果直接让智能体“把原始行加起来”，它会把这 $4.7M 也算进去。</li>
+<li>第二筛（成长合理价）：“S&amp;P 500 stocks with revenue growth over 15%, a P/E under 25, positive net income, and active 13F holders adding shares last quarter, sorted by revenue growth”，筛出 30 只，前列为 Micron 379.3%、Super Micro 93.2%、Devon 73.1%。</li>
+<li>每列先读定义再读排名：营收增长是最近一季同比单季数（周期反弹或并购都可能冲到榜首）；主动型 13F 持仓变化对应截至 2026-06-30 的季度；P/E 为过去 12 个月；缺任一有界指标的股票会被悄悄排除，而不是猜一个数填上。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>内幕买入筛：12 只，BSX 对账一致（仅测试）。</li>
+<li>成长合理价筛：30 只（仅测试）。</li>
+<li>投资收益：无；省时数字：无。作者原文明确：这不是投资建议。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（原文给出的可复用提示词，略作格式整理）</p>
+<p>```</p>
+<p>Using Equibles, screen the S&amp;P 500 for &lt;CONDITIONS&gt;, sorted by &lt;METRIC&gt;.</p>
+<p>Then, for the top 3 matches:</p>
+<p>  1. Show the raw rows behind the metric that put them on the list</p>
+<p>     (Form 4 rows, the quarter&#x27;s financials, or the 13F holders).</p>
+<p>  2. Recompute the screener&#x27;s figure from those rows and say whether it matches.</p>
+<p>  3. Give each dataset&#x27;s as-of date.</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>A 股没有完全相同的 Equibles 免费 MCP，但方法可搬：用手头的行情/公告数据源（同花顺、巨潮资讯、Wind/Choice 的公开接口）做“一句话筛选 + 原始行重算 + 给出每列截至日期”三步。关键不是抄这只股票，而是抄“汇总数字必须摊开原始行重算”这道工序。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>仅测试、无收益：本条不能写成投资回报、选股推荐或省时数字；作者原文已声明不是投资建议。</li>
+<li>作者全名待补核：正文未署全名，“Daniel Oliveira”系 dev.to 账号名推断，定稿前须核实，核不到则按 handle 处理、不进发布。</li>
+<li>每列日期不一致：13F 截至 2026-06-30、卖空为 9 月 30 日结算日、内幕为 90 天窗口、价格为最新快照、基本面来自最新财报——混用这些列做排名会失真。</li>
+<li>悄悄排除：缺任一有界指标的股票会被排除而不提示，筛出的“前 N 名”不是全市场排名。</li>
+<li>免费档限制：每天 100 次请求，超量后需付费或换号，成本不要写成无限免费。</li>
+<li>与已发布案例无重复：20 条已发布中没有“智能体筛股 + 原始行对账”主题；与此前淘汰的自动炒股类（Robinhood MCP 买卖股票）不同，本条不下单、不承诺收益。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
