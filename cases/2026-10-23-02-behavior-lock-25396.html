@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体先给自己上 25,396 道行为锁，再动手重构代码</p>
+<p>category: 编程搭建</p>
+<p>score: 85</p>
+<p>status: 已实现（作者自述，全量测试截图公开；作者仅 handle 署名）</p>
+<p>source_author: Rulestack（dev.to 署名；个人全名未给出）</p>
+<p>source_url: https://dev.to/rulestack/we-locked-25396-behaviors-before-our-agent-refactors-its-own-code-bugs-included-57hc</p>
+<p>source_date: 2026-10-21</p>
+<p>tools: [Claude Code, Jest, 自研 behavior-lock 测试集]</p>
+<p>cost: $0 新增工具成本；全量跑一次约 8 分 44 秒机器时间（10 核高负载机器）</p>
+<p>time_needed: 读者在自己项目上先做“缩小版”约半天（先给核心模块写 case list）</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：769 个测试文件、25,396 个测试全部通过，语句覆盖率 64.6%→99.1%；写锁的过程抓出 3 个真实 bug（已实现，作者自述，终端截图公开）</li>
+<li>状态：已实现（作者自述，未经审计）；作者只有 handle 署名，按博客署名先例列入</li>
+<li>成本：$0 工具成本；一次全量运行 8 分 44 秒</li>
+<li>耗时：作者 10 月 8 日至 13 日陆续落地；读者缩小版约半天</li>
+</ul>
+<h2>一句话</h2>
+<p>一个用 Claude Code 维护自己代码库的智能体，在动手做一次大型重构之前，先让智能体写了 25,396 个“行为锁”测试——不问代码对不对，只问“和昨天做的是不是一模一样”，连 bug 也原样钉住。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先缩小目标：重构前删掉生产代码没调用的导出函数、类型、文件和两个无用依赖，共 1,358 行——不用保护的代码先清掉。</li>
+<li>让智能体先写 case list 再写测试：每个 case 有编号，每个测试标题以编号开头；769 个文件镜像源码树；25,310 个测试带编号。</li>
+<li>行为锁的规则：期望值来自“跑今天的代码”，不是来自设计文档；测试与代码不一致时，钉住代码的行为，分歧单独报给主人裁决——有一个 bug（回复合规检查误判版本号“2.1”为测量数字）被故意钉住，等主人拍板。</li>
+<li>每个锁文件进沙盒：Jest 的 setupFilesAfterEach 把工作目录搬进临时目录，HOME 与 os.homedir() 指向沙盒；repo 内文件写、repo 内子进程工作目录、fetch/http/https（localhost 除外）全禁；名字像 secrets 的环境变量（TOKEN、PASSWORD、COOKIE 等）全删；TZ 固定。这个沙盒在建成过程中自己漏了 6 次才补牢（比如只改 HOME 没改 os.homedir() 导致测试改写了真实缓存）。</li>
+<li>锁的提交纪律写进 coding rules 一行：改动非预期→修代码；改动是预期的→改期望值并在 commit message 里写原因。至今 6 个 commit 改过期望值。</li>
+<li>写锁过程抓出 3 个 bug：DM 回复的“不再回复”消息绕过了全部三道发送前检查（修好后 5 个真实待办被正确拦截）、年终目标缺 follower 指标时周报崩溃、生成标签缺空格。</li>
+<li>覆盖率 64.6%→99.1% 后，主人要求“低于 100% 必须有主人批准的理由”，于是智能体把 235 处测不到的代码写成 222 行理由清单——截至 10 月 13 日一行都没被批准。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>规模：769 文件、25,396 测试全过，504,824 行测试代码保护 162,385 行源码（已实现，作者自述，终端截图）</li>
+<li>覆盖率：语句 64.6%→99.1%，分支 59.2%→98.3%（已实现，作者自述）</li>
+<li>抓 bug：写锁过程发现并修复 3 个真实 bug；锁落地后 6 个 commit 因改动行为被拦截并写明原因（已实现，作者自述）</li>
+<li>成本：全量跑 8 分 44 秒（10 核高负载机器，作者声明按上限理解）；沙盒补 6 个洞、50 万行测试代码的阅读成本是真实代价</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的指令结构，非原文逐字提示词）</p>
+<p>```</p>
+<p>任务：在[重构目标]动手前，先建 behavior-lock。</p>
+<p>第 1 步（缩小目标）：删掉生产代码未调用的导出/类型/文件与无用依赖，减少要保护的面积。</p>
+<p>第 2 步（case list）：为每个要锁的行为写一行 case：[编号] + 一句话行为描述；先出文档，再写测试。</p>
+<p>第 3 步（锁的语义）：期望值 = 跑今天代码的结果；测试与代码不一致时，钉住代码，分歧报给[主人]裁决。</p>
+<p>第 4 步（沙盒）：每个锁文件跑在隔离环境——禁写 repo、禁网（localhost 除外）、删 secrets 类环境变量、固定 TZ；违反隔离的操作必须让测试失败。</p>
+<p>第 5 步（提交纪律）：改动非预期→修代码；改动是预期的→改期望值并在 commit message 写原因。</p>
+<p>验收：覆盖率低于 100% 的每一处都要有一行主人批准的理由。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>思路与工具无关：Codex、通义灵码、文心快码都能搬。关键是三件小事——“期望值来自今天的代码而非设计文档”（这叫 characterization test，老方法新用）、沙盒清单（禁写、禁网、删 secrets 三条最值钱）、提交纪律那一行规则。先在自己项目的核心模块做缩小版（几十个 case），别一上来全仓 25,396 个。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>作者只有 handle 署名（Rulestack），个人全名未给出——按本站博客署名先例（Devaland、mewset）列入推荐，发布前如能补到实名应补。</li>
+<li>重构本身还没开始：锁是 10 月 8–13 日落地的，大重构尚未动手，锁到底挡不挡得住重构事故还是未知数——不要把“锁很全”读成“重构一定成功”。</li>
+<li>锁分不清“行为”和“接线”：一次纯内部的 helper 抽取就改了 69 个文件的期望值，50 万行测试的阅读成本是真实的。</li>
+<li>沙盒是作者家 TypeScript/Jest 栈的手工活，换栈要自己补等价隔离；全量 8 分 44 秒是在高负载机器上的上限口径。</li>
+<li>与已发布/待审批案例无重复：20 条已发布与两批待审批草稿中没有 behavior-lock / characterization test 主题。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

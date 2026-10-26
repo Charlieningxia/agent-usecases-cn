@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让 Claude 写完一个 Mac 应用的全部代码：首个可用版只用了约 8 小时</p>
+<p>category: 编程搭建</p>
+<p>score: 81</p>
+<p>status: 已实现（作者自述，commit 与 TestFlight 构建真实）</p>
+<p>source_author: Andy Bennett（Medium 署名）</p>
+<p>source_url: https://medium.com/@akbsteam/claude-wrote-all-the-code-the-time-went-somewhere-else-003a468e323d</p>
+<p>source_date: 2026-10-19</p>
+<p>tools: [Claude（代码与设计）, TestFlight, Todoist, 自研 Claude skill（拉取商店反馈）]</p>
+<p>cost: Claude 订阅成本（作者未公布具体档位与 token 账单）</p>
+<p>time_needed: 读者照搬该 loop 到自己项目约 1 天学会；完整产品仍需数周</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：原生 Mac/iPhone/iPad 求职应用 Helm，9 月 11 日首 commit → 10 月 18 日 641 次提交 / 21 个计划，Mac build 40、iOS build 34 上 TestFlight；首个可用 Mac 版约 8 小时 commits（已实现，作者自述）</li>
+<li>状态：已实现（作者自述，未经审计；commit/TestFlight 构建为真实记录）</li>
+<li>成本：Claude 订阅（具体金额未给出）</li>
+<li>耗时：首个可用版约 8 小时 commits；完整 beta 约 5 周</li>
+</ul>
+<h2>一句话</h2>
+<p>一位有 iOS 背景的开发者让 Claude 写了一个原生三端应用的全部代码——代码 8 小时就写完了，但他发现真正的耗时搬家了：从“写代码”搬到了“证明值得用”。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先拿 Web 版探路：用 Next.js 花一周、73 个 commit 做出可用的数据语料与产品形状，确认方向后再转原生（转原生的动因：CloudKit 同步 + 一次性买断制更适合求职者）。</li>
+<li>Loop：定需求→写规格→plan→拆成任务→逐个任务构建→每个任务独立评审。OpenRouter 引擎一处就拆出 13 个计划任务，若干走了 1–2 轮修复。</li>
+<li>全分支评审：每个评审者只看一个切片，但有些 bug 只活在接缝处——一次全分支评审抓到任务评审全漏掉的致命问题：余额请求在用户同意前就发出去了。</li>
+<li>真机与 Release 双轨：测试抓不到的问题清单——CloudKit 三个 session 连不上（binary 没链 CloudKit.framework）、首个 TestFlight 包只在 Release 崩（#Predicate trap）、iOS 同步只在 app 打开时工作（Xcode 静默丢了 entitlement）。作者的结论：“出问题的信息不在代码里，模型再强也推理不出来”，只能靠真机与 Release 实测。</li>
+<li>反馈闭环做成 Claude skill：TestFlight 的“分享 Beta 反馈”（截图+语音转文字备注）被 skill 自动拉进 Todoist（带附件），按 rubric 打 p1–p4 并写理由，作者可推翻；排好序的清单直接喂给下一个 build 计划。实例：iPad build 25 的 5 张截图变成 5 个任务；iPhone 上“粘贴简历后键盘关不掉”的真 bug 当晚合并修复。</li>
+<li>结论诚实：软件生命周期被同时向左（研究/立项/规格要想得更多）向右（测试与发布变成开发的输入）挤压；“证明能跑的成本崩塌了，证明值得用的成本还在以人的速度跑”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>交付：641 次提交 / 21 个计划，Mac build 40、iOS build 34，均上 TestFlight 内测（已实现，作者自述）</li>
+<li>速度：首个可用 Mac 版约 8 小时 commits（已实现，作者自述；作者强调 working ≠ shippable，沙盒/同步/正式包都在之后）</li>
+<li>方法：任务独立评审 + 全分支评审 + 反馈→Todoist→排期 skill，三件套真实跑通（已实现，作者自述）</li>
+<li>诚实声明：beta 反馈样本目前只有作者自己加 1 个外部用户，“毛边冒得快”但样本小</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文 loop 还原的任务下达结构，非原文逐字提示词）</p>
+<p>```</p>
+<p>阶段 0（探路）：先用最快的技术栈（一周）做出真实数据语料与可演示形状，确认方向再转正式栈。</p>
+<p>Loop（每个功能）：</p>
+<p>  1. 定需求 → 写规格 → 生成 plan → 拆成独立任务</p>
+<p>  2. 逐任务构建 + 每个任务独立评审（修 1–2 轮正常）</p>
+<p>  3. 全分支评审：专找“只活在接缝处”的 bug（权限/计费/跨模块状态）</p>
+<p>  4. 真机 + Release 双轨验证：测试与 Debug 跑不出来的问题（ entitlement、Release 特有崩溃、后台同步）必须真机走一遍</p>
+<p>  5. 反馈 skill：把[用户反馈渠道]的截图/文字/崩溃自动拉进[任务系统]，按[分级 rubric]打优先级并写理由，人可推翻；排好序直接喂给下个 build 计划</p>
+<p>铁律：信息不在代码里的问题，别指望模型推理出来——留出真机时间。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>Helm 是求职应用，loop 本体与赛道无关：独立开发者的 App/小程序/插件都能套。TestFlight 换成 TestFlight（iOS）/ 内部测试渠道（安卓）/ 灰度发布；Todoist 换成飞书/钉钉任务或 Notion；“反馈→任务→排期” skill 用任何 agent 框架（Claude Code、Codex）都能写，核心是 rubric 分级 + 人可推翻。先拿一个小功能跑通 loop 再铺全量。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>作者有 iOS 开发背景（自述多年没深耕 SwiftUI Mac 但平台熟），“8 小时”是 commits 口径且建立在“知道要做什么”之上——纯新手不要把 8 小时当成自己的预期。</li>
+<li>Claude 订阅与 token 成本未公布；641 次提交的真实花费未知，预算闸门自己设。</li>
+<li>结论里的“时间去哪了”建立在小样本上：beta 反馈只有作者 + 1 个外部用户，“值得用”阶段的耗时规律还没被验证。</li>
+<li>文末 waitlist（helm.kaiyou.digital）是作者自家应用的内测招募——内容本身是真实构建记录，阅读时知晓即可。</li>
+<li>与已发布/待审批案例无重复：2026-10-19-03 常驻智能体失败账本是“自动化活了多久”，本篇是“代码已不是瓶颈后的 loop 方法论”；与 2026-10-18-07 Issue→PR 不同赛道。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

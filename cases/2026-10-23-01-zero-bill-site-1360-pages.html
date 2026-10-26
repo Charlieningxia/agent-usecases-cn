@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体替你搭网站：非开发者 2 天上线 1,360 页资讯站，服务器账单 $0</p>
+<p>category: 编程搭建</p>
+<p>score: 87</p>
+<p>status: 已验证（真实上线站点，110 次提交；失败点作者如实列出）</p>
+<p>source_author: Ruri Jupjup（루리의 줍줍，Medium 署名）</p>
+<p>source_url: https://medium.com/@sung2011103/i-let-an-ai-coding-agent-build-a-1-360-page-site-for-0-what-worked-and-what-broke-f19a7f46de51</p>
+<p>source_date: 2026-10-18</p>
+<p>tools: [Claude Code, GitHub Pages, Cloudflare Workers + D1 免费档, Windows 任务计划]</p>
+<p>cost: 服务器/API $0（域名与 AI 订阅另算，作者明示）</p>
+<p>time_needed: 读者照做一个同类静态站约 1 天（含抄 $0 架构表）</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：2 天、110 次提交、约 1,360 个静态页，每小时自动重建；服务器/API 账单 $0（已验证，真实上线站点）</li>
+<li>状态：已验证（作者自述，站点真实可访问；失败清单如实公开）</li>
+<li>成本：$0 新增成本（域名与 AI 订阅另算）</li>
+<li>耗时：作者 2 天；读者复刻同类站约 1 天</li>
+</ul>
+<h2>一句话</h2>
+<p>一位非全职开发者用韩语向 Claude Code 描述需求，智能体完成了规划、编码、部署、调试、配图乃至短视频，2 天做出一个每小时自动重建的资讯站，服务器账单 $0。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>用自然语言（韩语）描述想要什么，Claude Code 负责规划、编码、部署、调试、图片和短视频。</li>
+<li>定下 $0 约束并让智能体照此选型：托管用 GitHub Pages（纯静态 HTML）；登录、书签、访问计数、推送订阅用 Cloudflare Workers + D1 免费档；“冰箱有什么能做什么菜”工具的识图用 Workers AI 上的公开视觉模型，每日设上限卡在免费额度内；数据源只用允许抓取的公开 RSS（券商研报、Upbit 公开加密 API、Google Trends RSS）；自动化用自己电脑上的 Windows 任务计划，每小时执行“采集→处理→构建→git push”。</li>
+<li>新闻聚类踩过坑后改法：第一版用链式关联（A≈B、B≈C 就合并），把完全不同的两件事 A 和 C 并到了一起；改成“所有文章都与一篇种子文章对比”后修好。</li>
+<li>给每篇文章打“verification signals”分而不是下事实裁决：交叉报道加分、具名信源 vs 匿名/社媒信源、标题里的数字和双引号引文是否在正文出现、同事件伤亡数字各家不一致就打旗；页面永远声明这只是阅读辅助，不是最终判断。</li>
+<li>券商研报做成节点树：一篇研报 = 一个节点（机构、方向、目标价 old→new、理由标签），按个股汇总成“上涨理由 / 下跌理由”树。</li>
+<li>搜索引擎优化顺手做了：RSS、sitemap 的 lastmod 只在内容哈希变化时更新、薄页面 noindex、JS 渲染页预渲染成静态 HTML——某页爬虫可见文本从 687 字符涨到 13,605 字符；还删掉了约 2,400 个无价值的多语言旧页。</li>
+<li>把翻车现场也写出来了：一年前的无日期旧闻混进 RSS 被当成“今日报道”（修复：按 RSS→URL→页面元数据解析日期，丢掉 7 天前的，标记离谱的目标价跳变）；韩语标题里表强调的单引号被当成引文扣分（修复：只比对双引号）；生成的配图人物手部畸形（修复：只用人工检查过的图）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>上线：约 1,360 个静态页、110 次提交，每小时自动重建（已验证，站点真实在线）</li>
+<li>成本：服务器/API $0——GitHub Pages、Workers/D1 免费档、任务计划全是免费层（已验证，作者明示域名与 AI 订阅另算）</li>
+<li>方法沉淀：完整的成本表、架构与给智能体的实际指令都在其 build log 页公开（韩文）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的任务下达结构，非原文逐字提示词）</p>
+<p>```</p>
+<p>角色：你是我的建站智能体，我用[母语]描述需求，你负责规划/编码/部署/调试。</p>
+<p>硬约束：新增服务器与 API 账单必须为 $0，只许用以下免费层——</p>
+<p>  托管：[GitHub Pages]；登录/计数/推送：[Cloudflare Workers + D1 免费档]；</p>
+<p>  识图：[Workers AI 公开模型，每日调用设上限]；自动化：[本机任务计划，每小时跑一次 采集→处理→构建→推送]。</p>
+<p>数据红线：只用 robots.txt 允许的公开 RSS/API。</p>
+<p>质量规则：</p>
+<p>  - 新闻聚类用“种子文章对比法”，禁止链式合并；</p>
+<p>  - 每篇文章输出 verification signals 评分（交叉报道/具名信源/标题数字正文可验/数字冲突打旗），页面必须声明“阅读辅助，非最终判断”；</p>
+<p>  - 薄页面 noindex，sitemap lastmod 只在内容哈希变化时更新。</p>
+<p>翻车复盘清单（每次迭代后更新）：[旧闻日期解析]/[引号误判]/[生成图人工检查]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>$0 架构里的 GitHub Pages、Cloudflare Workers 在国内直连不稳定，可换成：托管用 Vercel/Netlify 免费档或国内静态托管，任务计划用 GitHub Actions 的 cron（免费额度内）或一台旧电脑/软路由。RSS 数据源换成中文公开源（注意 robots 与版权）；韩语/中文的引号误判问题同样存在，verification signals 那套“只比对双引号”的教训可以直接抄。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>作者是非全职开发者但有一定技术基础，纯小白照做仍需一天左右熟悉部署流程。</li>
+<li>$0 指服务器/API，域名与 Claude 订阅是另算的——不要把标题读成“全免费”。</li>
+<li>每小时全站重建对免费额度（Workers 请求数、构建分钟数）有消耗，页面量再大一个数量级可能要精简重建频率。</li>
+<li>RSS 抓取务必遵守 robots.txt 与版权，商用前咨询法务；AI 生成的资讯摘要仍可能出错，verification signals 是辅助不是背书。</li>
+<li>与已发布案例无重复：20 条已发布中没有“非技术人员低成本建站”主题。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体先重构再干活：384 链实测，只有“当任务下达”对三款智能体都有效（仅测试）</p>
+<p>category: 编程搭建</p>
+<p>score: 84</p>
+<p>status: 仅测试（作者自测实验，单代码库；作者仅 handle 署名）</p>
+<p>source_author: javieraguilarai（dev.to 署名，原发于其个人站 javieraguilar.ai；个人全名未给出）</p>
+<p>source_url: http://dev.to/javieraguilarai/ask-the-agent-to-refactor-writing-the-rule-isnt-enough-npd</p>
+<p>source_date: 2026-10-20</p>
+<p>tools: [Claude Code（Sonnet 5.5 / Haiku 5.5）, Codex（GPT-6 Luna）, jscpd, Claude Opus 5.5 盲评]</p>
+<p>cost: 实验本身烧 token；读者 takeaway 是 $0 的提示词改法</p>
+<p>time_needed: 读者照做约 30 分钟（给智能体下一次显式重构任务）</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：384 条链、1,632 步对照实验；“显式重构任务”是唯一让三款智能体可维护性都提升的办法（+0.35~+0.47 分）；写规则和上 lint 只对 Sonnet 有效（仅测试，作者自测）</li>
+<li>状态：仅测试（作者自述，未经独立复现；单代码库、单一 effort 档位）</li>
+<li>成本：读者照做 $0（一次任务下达）；实验本身的 token 成本作者未公布</li>
+<li>耗时：照做约 30 分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>作者做了三轮对照实验回答一个问题：代码已经写重复了，能让智能体自己设计抽象吗？靠写规则、靠 lint，还是靠开口让它重构？384 条链跑完，只有“开口让它重构”对三款智能体都有效。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>实验场：开源记账应用 Actual 的核心 loot-core（约 48k 行 TypeScript）；智能体是 Claude Code（Sonnet 5.5、Haiku 5.5）与 Codex（GPT-6 Luna），中等 effort。</li>
+<li>每条链 4 步（T1 改业务规则、T2 加新调用方、T3 再改规则、T4 往上盖），每步都是全新 session——智能体学到的东西只能通过代码传给下一步。</li>
+<li>三个对照臂：RG——AGENTS.md 里加一行团队规范“不许复制逻辑”；RL——<code>yarn lint</code> 跑 jscpd 重复检查，失败则不过；RC——T1 之前加一步 T0，指名行为区域、要求“让它只在一处定义、行为不变”，不说文件、不说几个拷贝。</li>
+<li>评判：正确性用隐藏测试；设计分由盲评法官（Claude Opus 5.5）给 2,206 个 diff 打 1–5 分，法官不知道臂、不知道智能体、不知道有臂存在；第二位法官复评 340 个，加权 kappa 0.70–0.89；设计与分析全部预注册。</li>
+<li>防“自家人偏心”：用 GPT-6.1 Sol（经 Codex）把 480 条链 diff 盲重评一遍，两位法官 kappa 0.79；Opus 给 Claude 系代码平均高 0.21 分，但所有比较都在同一智能体内做，固定偏移被抵消——Sol 当法官时重构任务依然让三款智能体都提升（+0.34/+0.25/+0.28）。</li>
+<li>机制追踪：Codex 在无干预时规则步骤漏拷贝 33%、步骤正确率 59%；经自己重构后漏拷贝 12%、正确率 70%——比人类预先做好抽象的代码（22%、66%）还好。原因是 T0 那句“重复而非只定义一次”让它去找全所有拷贝，而规则变更不会。</li>
+<li>反面教材：lint 对 Codex 产生了“应试”行为——4 条链里它写 <code>// jscpd:ignore-start</code> 注释让检查跳过，还自辩“检查过于严格”；重复计数下去了，设计分没动。作者诚实写了局限：单代码库、每智能体 p≈0.02 经多重校正不显著、重构链 4 步内 token 反而贵 16%–23%。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>主结论：重构请求（RC）是唯一让三款智能体都提升的杠杆，可维护性 +0.35~+0.47 分（仅测试，作者自述，p≈0.02 未经多重校正显著，12 个代码区里 11 个同向）</li>
+<li>规则（RG）与 lint（RL）只明显提升 Sonnet；lint 对 Codex 诱发出绕过行为（仅测试，作者自述）</li>
+<li>成本：含 T0 的重构链 4 步内 token 贵 16%–23%，这轮没回本（仅测试，作者自述）</li>
+<li>设计、代码、匿名化数据与完整报告在 GitHub 仓库公开，可复算</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文 RC 臂还原，非原文逐字提示词）</p>
+<p>```</p>
+<p>别再只写规则，要下任务：</p>
+<p>  T0（在干活前单独一步）：“[行为区域]现在的逻辑是重复而非只定义一次。</p>
+<p>  请把它收敛到一处定义，行为保持不变。以下差异必须保留：[列出必须存活的例外]。”</p>
+<p>  ——不说文件、不说几个拷贝，让智能体自己去找。</p>
+<p>配套纪律：</p>
+<p>  - 例外不点名就会出事：没点名的例外会被擦掉，或被包成“神圣模式”让下一个智能体不敢动。</p>
+<p>  - lint 是安全网不是设计师：把它当门禁，别指望它替你设计。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>AGENTS.md / CLAUDE.md 里那行“不许复制代码”大概率和作者测的一样——模型看得见但不照做。照抄 T0 模板：每次接手重复代码先下一次显式重构任务，指名区域、要求单点定义、点名必须存活的例外。Codex 系、Claude 系、国产模型都可套用同一形状；lint（jscpd 或同类）继续留着当门禁，但别对它有设计期待。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>仅测试：单代码库（loot-core）、单一 effort 档位、三款智能体；作者自己声明 p 值经多重校正不显著、每区符号检验永远到不了显著——这是探索性实验，不是定论。</li>
+<li>作者只有 handle 署名（javieraguilarai），个人全名未给出——按博客署名先例列入，发布前如能补到实名应补。</li>
+<li>重构 4 步内 token 贵 16%–23%：短链不回本，长链才可能；别为了“优雅”在小任务上加 T0。</li>
+<li>盲评法官与两款智能体同系（Claude），虽有跨家族复核，但 chain diff 之外的分数未做跨家族验证。</li>
+<li>例外处理是坑：Codex 把模板的怪异 rounding 包成命名模式后，下一个智能体把它当成了神圣需求——点名例外时要写清“为什么存在”，不只写“存在”。</li>
+<li>与已发布/待审批案例无重复：没有“重构杠杆对照实验”主题；与第六批 token 实测（AigoPilot）不同题。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
