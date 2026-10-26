@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体工厂量产 570 张健身图卡：机器判过的 490 张，人工估约八成要扔（失败结果）</p>
+<p>category: 内容营销</p>
+<p>score: 77</p>
+<p>status: 已实现（失败结果，作者实测日志；“约八成要扔”为作者抽样估算，未经审计）</p>
+<p>source_author: Emre Ferik</p>
+<p>source_url: http://dev.to/emre_ferik/i-built-an-ai-agent-factory-to-make-570-exercise-visuals-heres-what-each-model-got-right-and-5haf</p>
+<p>source_date: 2026-10-20</p>
+<p>tools: [Hermes Agent, DeepSeek Harness, Meta Muse Image 1.0, Seedream 4.0, Blender 4.2, SDXL + ControlNet 等]</p>
+<p>cost: 未给出（作者只记工时：约 10 天晚间；各模型额度与 Modal H100 花费未汇总）</p>
+<p>time_needed: 读者借鉴检查清单约 30 分钟；全量复刻不推荐</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：内容营销 / 前沿实验</li>
+<li>结果：AI 评委批准 490 张图卡，作者全尺寸抽查后估算约 80% 要扔（已实现，失败结果；百分比为作者估算，未经审计）；最强模型看小预览图批准的 49 张，全尺寸看 49 张全坏</li>
+<li>状态：已实现（失败结果，作者日志口径）</li>
+<li>成本：未给出（约 10 天晚间工时，金额未汇总）</li>
+<li>耗时：教训本身 30 分钟可读完照用</li>
+</ul>
+<h2>一句话</h2>
+<p>生成和检查用的是同一类 AI 时，错误不会互相抵消，只会互相叠加——这条用 570 张健身图卡的量产翻车把这句话钉死了。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>需求：一个类 Gravl 的健身 App 需要 570 个动作，每个动作一张卡（起始 / 中间 / 结束三帧，同一人物、机位固定）。作者自述不会写代码，全程“指挥”AI 模型干活，约 10 天晚间搭出一条流水线：图像模型画图、AI 评委检查、Blender 3D 管线、任务队列、实时看板，两个智能体平台（Hermes Agent 与 DeepSeek Harness）靠文件互相交活。</li>
+<li>先后试错（原文顺序）：Wan 2.2 图生视频动作大致对但人物漂移；SDXL + IP-Adapter 保不住人物一致；只靠图像模型按动作名画图，第一批约 40% 动作或结束姿势画错。</li>
+<li>加评委、加流程：“DNA”人物规格、机器参考库、双评委一起上，质量没动，复杂度涨了。</li>
+<li>转 3D：Blender 里机位稳了，但让大模型直接写关节角度 JSON，手不抓杠、杠穿过躯干；再上照片级渲染，编辑模型又把姿势改掉（碎颅者式弯肘被改成卧推直臂）。</li>
+<li>回到全自动图像线：自动化跑通了，质量没跑通；还出过一次失控任务——一个不存在的命令行参数让流程把已定义的 442 个动作全部重跑。</li>
+<li>收尾：作者自己全尺寸打开“已批准”的图卡抽查，结束项目。评委共批准 490 张，作者估算其中约 80% 要扔（作者估算，未经审计）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>490 张被 AI 评委批准，约 80% 经作者全尺寸抽查估算要扔（已实现，失败结果；比例为估算）</li>
+<li>最强模型 Claude Opus 5.5 看小预览图批准 49 张，全尺寸复核 49 张全坏（作者实测）</li>
+<li>备用图像模型 Seedream 4.0 产出 11 张，作者全尺寸只批 2 张（作者实测）</li>
+<li>视觉评委 Muse Spark 1.3 在作者的评委测试里只得 69%，且是“背下了例题”而非学会规则（作者实测）</li>
+<li>正面子结果：编程模型 Claude Sonnet 5.5 一批改动 381 个测试通过、约 14 分钟（作者实测）；两个智能体并发写同一 JSON 文件会写坏，改成“临时文件 + 原子替换 + 失败重试”后 6,000+ 次并发读取零错误（作者实测）</li>
+<li>机会成本自省：作者明说市面上许多健身 App 的动作图库授权只要几百美元，自己花了 10 天造了一个买得到的东西（金额为作者转述的市场口径，未核价）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>本条的可复用资产是“评委指令结构”（按原文教训还原，非原文）：</p>
+<p>```</p>
+<p>不要让评委打分（X/10），打分只会换来宽容。</p>
+<p>让评委只报结构化事实，结论由代码比对：</p>
+<ul>
+<li>第[1/2/3]帧机位角度：[正面/侧面/背面]</li>
+<li>握法：[正握/反握]；画面人数：[数字]</li>
+<li>关键接触点是否成立：手是否在杠上[是/否]，脚是否落地[是/否]</li>
+</ul>
+<p>事实与规格不一致 → 自动打回，不许评委“综合判断通过”</p>
+<p>上线前铁律：先全尺寸人工抽查 [3–5] 件，再谈扩到 [500] 件</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内做电商主图、短视频素材、课程配图的团队最容易踩同一个坑：用 AI 批量生成、再用 AI 批量质检。迁移法只有三条——动作/商品形态先找真源（实拍、动捕、供应商原图），AI 只做风格化；质检让模型报事实、代码做判断；任何量产先全尺寸抽 3–5 件再放量。这三条不挑工具。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>“约 80%”是作者抽样后的估算，不是逐张统计，引用时必须同屏带“作者估算，未经审计”。</li>
+<li>成本未给出：各模型额度、Modal H100 等花费作者未汇总，只知道约 10 天晚间工时；不要替他编一个总价。</li>
+<li>单项目、单作者日志：模型逐个点评是他的任务口径，换任务可能完全不同；本站只取“生成与验证同源则错误叠加”这条可迁移结论。</li>
+<li>前沿位说明：本条按任务配比计入前沿实验（失败账本），结论未经第三方验证。</li>
+</ul>
+<h2>原文链接</h2>
+<p>http://dev.to/emre_ferik/i-built-an-ai-agent-factory-to-make-570-exercise-visuals-heres-what-each-model-got-right-and-5haf</p>
+<p>项目代码与协议（原文给出）：github.com/emre-ferik/ai-agent-field-notes</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

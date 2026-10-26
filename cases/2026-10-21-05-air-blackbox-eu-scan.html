@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让扫描器给智能体代码做合规体检：5,754 个文件只有 23 个全过（原始数据公开）</p>
+<p>category: 调研数据</p>
+<p>score: 72</p>
+<p>status: 已实现（扫描已完成，原始数据与脚本公开；阈值口径宽松，作者已自注）</p>
+<p>source_author: Jason Shotwell（AIR Blackbox 创建者，airblackbox.ai 署名核实）</p>
+<p>source_url: https://news.ycombinator.com/item?id=47247314</p>
+<p>source_date: 2026-03-04（HN Firebase 与 Algolia API 双源核实，epoch 1772631887，HN 发帖账号 @airblackbox，2026-10-22 补核）</p>
+<p>tools: [AIR Blackbox 开源扫描器, Python]</p>
+<p>cost: $0（开源，本地运行）</p>
+<p>time_needed: 给自己的仓库跑一遍约 30 分钟</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：调研数据 / 编程搭建</li>
+<li>结果：扫描 11 个头部开源智能体项目的 5,754 个 Python 文件，平均合规分 2.2/6；97% 文件不过风险管理条（第 9 条），只有 23 个文件（0.4%）六条全过（已实现，原始数据公开可复算）</li>
+<li>状态：已实现（作者扫描结果，判定阈值宽松口径见风险段）</li>
+<li>成本：$0</li>
+<li>耗时：约 30 分钟自查</li>
+</ul>
+<h2>一句话</h2>
+<p>EU《人工智能法案》的技术要求落到代码里是什么样？这个开源扫描器把 6 条要求变成检查项，并先拿全行业最有名的 11 个项目开了一遍刀。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>作者 Jason Shotwell 做了一个开源静态分析工具 AIR Blackbox，按 EU AI Act 第 9、10、11、12、14、15 条的技术要求扫 Python 智能体代码，自比“治理版 linter”。</li>
+<li>每条检查什么（原文口径）：第 9 条风险管理（风险分类、访问控制、风险审计）；第 10 条数据治理（输入校验、PII 处理、数据模式、溯源）；第 11 条记录与文档（日志、文档、类型标注）；第 12 条记录保存（结构化日志、审计轨迹、时间戳、日志完整性）；第 14 条人类监督（人工复核、覆盖机制、通知）；第 15 条稳健性（输入净化、错误处理、测试、限流）。</li>
+<li>压力测试：拿 11 个头部开源项目共 5,754 个文件开扫——AutoGPT、Microsoft AutoGen、LlamaIndex、Mem0、Phidata、LiteLLM、GPT-Researcher、Embedchain、LangGraph、OpenAI Agents SDK、CrewAI Examples（星数合计 341,000+，原文口径）。</li>
+<li>完整报告、原始数据（JSON）与扫描脚本全部放在仓库里，任何人可复算（原文给出 GitHub 链接）。</li>
+<li>作者先自曝口径：一条“通过”的标准是该条子检查里至少命中 1 项——这是故意放宽的门槛，“真实合规要求高得多”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>平均分 2.2/6 条（已实现，公开数据可复算）</li>
+<li>不过第 9 条（风险管理）97%、第 12 条（记录保存）89%、第 14 条（人类监督）84%（同上口径）</li>
+<li>六条全过：23 / 5,754 个文件，0.4%（同上口径）</li>
+<li>最高分仓库 AutoGPT 2.9/6，最低 CrewAI 示例 1.4/6（同上口径）</li>
+<li>口径提醒：以上是在“至少命中 1 个子检查就算过”的宽松标准下测的——即便如此都大面积不过，这正是本条的新闻点；不许写成“97% 的项目违法”，静态扫描查的是技术痕迹，不是法律结论（作者原文自注）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>本条的资产是自查清单结构（按原文 6 条检查项还原）：</p>
+<p>```</p>
+<p>给自己的智能体仓库逐条自问（答不出就记为缺项）：</p>
+<ol>
+<li>风险：有没有[风险分类 / 访问控制 / 风险审计]的代码痕迹？</li>
+<li>数据：有没有[输入校验 / PII 处理 / 数据模式]？</li>
+<li>文档：关键模块有没有[文档与类型标注]？</li>
+<li>记录：有没有[结构化日志 + 时间戳 + 审计轨迹]？</li>
+<li>监督：有没有[人工复核点 / 一键覆盖 / 异常通知]？</li>
+<li>稳健：有没有[输入净化 / 错误处理 / 测试 / 限流]？</li>
+</ol>
+<p>先跑开源扫描器拿机器结论，再逐条人工确认——扫描器是 linter，不是律师。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>做欧美市场的团队直接相关：EU AI Act 高风险系统执行节点作者原文写为 2026 年 8 月，但该口径已被后续立法推迟（EUR-Lex Regulation (EU) 2026/1744 核实：Annex III 高风险义务 2027-12-02 起、Annex I 类 2028-08-02 起；一般适用日 2026-08-02 未变）——引用时用更正后日期，别把原文的 2026 年 8 月当现行节点。国内团队不出海也有可搬的部分——第 12 条“审计轨迹”和第 14 条“人工覆盖”正是本站多条失败案例（误合并、乱发地址、循环烧钱）共同缺的那两件，先把日志与人工闸门补上，比先谈模型更值。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>静态分析的边界（作者自注）：查不了运行时行为；按文件扫会漏跨文件的合规模式；阈值故意宽松。结论只能写“技术痕迹缺失”，不能写“违法”。</li>
+<li>作者是工具创建者，扫描既是研究也是自家工具的展示，利益关系存在；本站看重的是原始数据与脚本公开、可复算。</li>
+<li>发帖日期已补核（2026-10-22）：HN Firebase 与 Algolia API 双源一致，2026-03-04。执行节点口径已按官方源更正（见下条），不再因此降备选。</li>
+<li>EU 执行节点已更正（2026-10-22 按 EUR-Lex 官方文本核实）：作者原文的「2026 年 8 月」高风险节点已被后续立法推迟——Regulation (EU) 2026/1744 修订 AI Act 第 113 条，Chapter III 第 1–3 节高风险义务改为 Annex III 类 2027-12-02 起、Annex I 类 2028-08-02 起适用；法案一般适用日 2026-08-02 本身未变。发布时必须用更正后口径，不得把作者原文的 2026 年 8 月写成现行高风险执行日。</li>
+<li>文件级分母口径：5,754 是文件数不是项目数，标题与正文引用时不许偷换成“97% 的项目”。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://news.ycombinator.com/item?id=47247314</p>
+<p>仓库与完整报告（原文给出）：https://github.com/air-blackbox/air-blackbox-mcp</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

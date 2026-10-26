@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体管代码写完之后的事：容器扫描问题从 166 个降到 1 个（公开流水线记录）</p>
+<p>category: 编程搭建</p>
+<p>score: 78</p>
+<p>status: 已实现（公开 MR 与流水线历史可核，作者自述整理）</p>
+<p>source_author: Devaland（dev.to @devaland，原发 devaland.com；个人姓名未给出）</p>
+<p>source_url: https://dev.to/devaland/five-ai-agents-after-the-code-what-gitlab-duo-did-in-a-real-pipeline-5dbb</p>
+<p>source_date: 2026-10-18</p>
+<p>tools: [GitLab Duo 自定义 Flow, GitLab CI/CD, Google Cloud Run]</p>
+<p>cost: 未给出（作者明示 Duo 每次运行的 credit 成本未知，发布前须显眼标注）</p>
+<p>time_needed: 复刻需半天到一天（需 GitLab Duo 与云环境）</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：容器扫描 166 → 1（已实现，合并后主流水线实测口径）；计划智能体约 2 分钟出完整计划；评审智能体对一个 MR 跑了 3 轮才放行</li>
+<li>状态：已实现（项目 MR、流水线历史公开可核）</li>
+<li>成本：未给出（Duo credit 单次成本作者未知）</li>
+<li>耗时：读者复刻约半天到一天</li>
+</ul>
+<h2>一句话</h2>
+<p>把写代码之后的计划、评审、修复、安全、发布五件事拆给五个 GitLab Duo 智能体，但合并与上线永远留给人。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>在公开仓库 ro-cited-answers（一个“无出处不回答”的罗马尼亚公共程序问答演示服务）外围加 GitLab CI/CD 与五个自定义 Duo Flow，每个智能体有独立服务账号，定义文件放在仓库 <code>.gitlab/duo/flows/</code>，以仓库为准同步。</li>
+<li>全部智能体受 <code>AGENTS.md</code> 约束：只能开合并请求（MR）和写评论，不能合并、不能部署。</li>
+<li>计划智能体（rca-plan）：Issue 一创建就自动触发，在 Issue #1 上约 2 分钟后贴出完整计划，该计划后来成为实际功能（!6 合并）。</li>
+<li>评审智能体（rca-review）：只问一个问题——“这个改动会不会让系统回答它本来会拒绝的问题”。在 MR !5 上跑了 3 轮（2 个高、3 个中、最后 READY），并在 !7 抓到一个真 bug。</li>
+<li>修复智能体（rca-fix）：流水线失败时触发；作者故意埋的 NameError，它开 !3 用一个字符修复，离线门禁 6/6、冒烟 4/4 后流水线转绿；后来还诊断出一次不是埋的竞态（两次合并差 8 秒共用 candidate 标签），它只开 Issue #4 给三个选项并写明“需要人决定”，没有改代码。</li>
+<li>安全智能体（rca-secure）：汇总 173 条扫描发现（容器 166、SAST 7、密钥 0），一条不删，开 !4 把基础镜像换成 Alpine + 非 root 用户；人合并后主流水线容器扫描从 166 降到 1（剩 1 条 zlib 中危）。</li>
+<li>发布智能体（rca-release）：主分支流水线结束后写发布摘要；第一次因沙箱代理拦截查不了生产环境，它写“未验证”而不是猜，之后只放行两个 Cloud Run 主机名才自查成功。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>容器扫描：166 → 1（已实现，合并后主流水线口径；MR 流水线本身不跑容器扫描，作者已注明这个测量限制）</li>
+<li>计划：约 2 分钟出计划（已实现，Issue #1 记录）</li>
+<li>评审：!5 三轮后放行（已实现，MR 历史公开）</li>
+<li>失败与教训同样入账：作者曾把“读评审结论”和“合并”写进一条命令，结果在结论为 NOT READY 时误合并（!13），后改为两步分开（!14）；修复智能体曾为同一 YAML 故障开重复 MR（!8、!9）</li>
+<li>规模口径：作者明示只跑了“一把”次数、不是成千上万次，服务本身是小文档集演示项目，不许外推成生产规模结论</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文的 AGENTS.md 约束与单问评审法还原，非原文提示词）</p>
+<p>```</p>
+<p>你是[计划/评审/修复/安全/发布]智能体，只负责[单一职责]。</p>
+<p>权限：可以开合并请求、写评论；不可以合并、不可以部署。</p>
+<p>评审时只回答一个问题：[这个改动会不会破坏系统最重要的一条规则：____]</p>
+<p>查不到、验不了时写“未验证”，不许猜。</p>
+<p>需要人拍板时：开 Issue，列出[选项 A/B/C + 各自代价]，写明“需要人决定”，停手。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内团队多用 Gitee、极狐 GitLab 或自建 CI，Duo 未必可用，但结构可搬：把“计划 / 评审 / 安全扫描分诊”拆成独立机器人账号，统一只给开 PR 和评论的权限，合并留人。先从安全扫描分诊这一件抄起：让智能体汇总扫描器输出、给出换基础镜像这类可回滚的修复 PR，数字最容易前后对照。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>成本未给出：作者明示不知道 Duo 每次运行烧多少 credit，读者上线前必须先在自己的套餐里实测单次成本，超过 $50/月须显眼标注（本条发布时保留此标注）。</li>
+<li>与第四批 Anthropic 七层评审的区别：那条是 Claude Code 团队内部的代码评审分层；本条是 GitLab Duo 在公开小项目上管“代码之后”的全流水线，同题材不同工具、不同任务段，编辑部按门槛 5 判定不重复，但连发节奏请审批时定。</li>
+<li>演示服务 ≠ 生产业务：文档集小、运行次数少，166→1 是扫描条数下降，不等于风险同比例下降（剩下的 1 条仍需人判断）。</li>
+<li>权限设计是前提：智能体一旦拿到合并/部署权，作者误合并的教训会放大成事故。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://dev.to/devaland/five-ai-agents-after-the-code-what-gitlab-duo-did-in-a-real-pipeline-5dbb</p>
+<p>公开仓库（原文给出）：https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43427415/ro-cited-answers</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

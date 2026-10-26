@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体别再整文件地读代码：依赖图喂上下文，单任务成本 $0.78 降到 $0.33（作者自测基准）</p>
+<p>category: 编程搭建</p>
+<p>score: 73</p>
+<p>status: 已实现（作者自测基准，42 次运行；未经独立审计）</p>
+<p>source_author: Nicola Alessi（Vexp 联合创始人，HN @nicola_alessi；DEV 个人页署名 Nicola Alessi、Co-Founder @ Lumigo &amp; Vexp 核实，2026-10-22 补核）</p>
+<p>source_url: https://news.ycombinator.com/item?id=47222316</p>
+<p>source_date: 2026-03-02（HN Firebase 与 Algolia API 双源核实，epoch 1772477523，2026-10-22 补核）</p>
+<p>tools: [Vexp MCP Server, Claude Code, tree-sitter]</p>
+<p>cost: 免费层可用（原文：free tier, no account needed）；完整定价未给出</p>
+<p>time_needed: 约 1 小时装上并用自己的任务复测</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建 / 省钱账单</li>
+<li>结果：单任务成本 $0.78 → $0.33，降 58%（已实现，作者自测基准，未经独立审计）；时长 170 秒 → 132 秒；输出 token 504 → 189</li>
+<li>状态：已实现（作者基准实测口径）</li>
+<li>成本：免费层起步</li>
+<li>耗时：约 1 小时复测</li>
+</ul>
+<h2>一句话</h2>
+<p>编码智能体贵在“找代码”：先用 tree-sitter 把仓库建成依赖图，只把相关节点喂给它，少读整文件，账单立刻降。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>痛点：Claude Code 需要一个函数时也常常把整个文件读进来，上下文越攒越贵。</li>
+<li>做法：写一个 MCP 服务（Vexp），用 tree-sitter 预先计算依赖图（函数、类、类型、导入、调用关系），存 SQLite，文件保存时增量更新；查询时只返回排好序的相关代码节点。</li>
+<li>基准设计（原文口径）：FastAPI 代码库（800 个 Python 文件）、Claude Sonnet 4.6、7 个任务（修 bug、加功能、重构、理解代码），每任务每组跑 3 次，共 42 次执行；两组都用 <code>--strict-mcp-config</code> 隔离，headless <code>claude -p</code> 收集流式 JSON 结果。</li>
+<li>机制变化：基线平均每任务约 15 次 Read + 4 次 Grep + 4 次 Glob；用图谱后平均 2.3 次 pipeline 调用一次拿到排好序的上下文，缓存创建更少、往返更少。</li>
+<li>附带功能：跨会话记忆——观察记录挂到图节点上，代码变了自动标过期。单个 Rust 二进制、纯本地运行，除可选许可证检查外无网络调用。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>单任务成本：$0.78 → $0.33，-58%（已实现，作者自测基准，未经独立审计）</li>
+<li>时长：170 秒 → 132 秒，-22%；输出 token：504 → 189，-63%（同上口径）</li>
+<li>分任务类型：理解代码 -57%、新功能 -53%、重构 -48%、修 bug -29%（同上口径；作者自释：bug 修复范围本来就窄，省得最少）</li>
+<li>样本量提醒：7 个任务 × 3 次 × 2 组 = 42 次，单个代码库、单个模型，不许外推成普遍降幅</li>
+</ul>
+<h2>提示词结构</h2>
+<p>本条的资产是复测协议（按原文基准方法还原）：</p>
+<p>```</p>
+<p>在自己的仓库上复测，别信厂商数字：</p>
+<ol>
+<li>挑 [7] 个真实任务（修 bug / 加功能 / 重构 / 理解代码各至少 1 个）</li>
+<li>A 组：原生方式跑 [3] 次；B 组：接上图谱 MCP 后跑 [3] 次</li>
+<li>两组用同一模型、同一隔离配置，只比三件事：</li>
+</ol>
+<p>   单任务成本、时长、输出 token</p>
+<ol>
+<li>降幅 &lt; [20%] 或正确率下降 → 不采用，记录原因</li>
+</ol>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内团队用 Claude Code、Cursor、通义灵码等都会遇到“读全仓烧 token”。图谱法与工具无关：先给仓库建一份符号/依赖索引（tree-sitter 是开源的），让智能体先查索引再读文件。先在一个 500+ 文件的老仓库上按上面的协议复测半天，数字对得上再推广。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>厂商自测：基准由工具作者本人设计与执行，任务挑选与判定口径未公开全量数据，58% 只能按“作者自测，未经独立审计”引用。</li>
+<li>作者与日期已补核（2026-10-22）：HN 页面文本本身不显示这两项，改走 HN Firebase 与 Algolia API 双源核实——作者 HN @nicola_alessi、发帖 2026-03-02；全名 Nicola Alessi 与 Vexp 联合创始人身份由其 DEV 个人页署名交叉核实。门槛 1 该缺项已消除，不再因此降备选。</li>
+<li>与已发布内容的边界：第三批 CI/CD 分流省的是“别让智能体亲自跑测试部署”的调用次数，本条省的是“读代码的上下文”，任务段不同；今日淘汰的工具清单条省的是 schema 重复发送，三者不要混写。</li>
+<li>免费层有节点/仓库上限（另一 Show HN 介绍帖口径：免费层 2,000 节点、1 个仓库），大仓库成本未给出。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://news.ycombinator.com/item?id=47222316</p>
+<p>工具站（原文给出）：https://vexp.dev</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

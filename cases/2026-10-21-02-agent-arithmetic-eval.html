@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让智能体先过算术关：86 行脚本 5 分钟抓出报告里加起来 116% 的错误</p>
+<p>category: 调研数据</p>
+<p>score: 78</p>
+<p>status: 已实现（在研讨会仓库保存的 16 次运行数据上实测）</p>
+<p>source_author: Chew Loong Nian</p>
+<p>source_url: https://medium.com/@chewloongnian/your-claude-agents-analyst-split-added-up-to-116-a-free-code-eval-catches-it-6d7dcbc897b4</p>
+<p>source_date: 2026-10-18</p>
+<p>tools: [Node.js 脚本（86 行）, Arize Phoenix 研讨会公开仓库数据]</p>
+<p>cost: $0（不需要 API key、不需要 Phoenix 服务）</p>
+<p>time_needed: 约 5 分钟跑通；给自己的智能体加上同类检查约 30 分钟</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：调研数据 / 编程搭建</li>
+<li>结果：一个智能体报告写出“买入 50% + 持有 52.6% + 卖出 13.1% = 115.7%”；86 行脚本在仓库保存的 16 次运行里找出 5 处自相矛盾，全部集中在那一次运行（已实现，保存数据可复算）</li>
+<li>状态：已实现（脚本对公开保存数据的实测结果）</li>
+<li>成本：$0</li>
+<li>耗时：约 5 分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>别先上复杂的模型评测：先用几十行代码检查智能体报告自己跟自己对不对得上，很多低级错误根本过不了算术关。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>素材来自 AI Engineer 2026-10-17 的研讨会 “How to Know If Your AI Agent Is Any Good: Evals With Phoenix &amp; Claude”（讲者 Laurie Voss，Arize AI）：用 Claude Agent SDK + Claude Haiku 4.5 搭了一个股票报告智能体，仓库 seldo/aie-nyc 保存了 16 次运行记录。</li>
+<li>问题样本：其中一次运行写出分析师评级分布“50% 买入、52.6% 持有、13.1% 卖出”，三者相加 115.7%——而研讨会自带的代码评测放行了这份报告，人工标注还给了“可执行（actionable）”。</li>
+<li>作者写了一个 86 行 Node 脚本，只做一件事：检查报告对自身数字的陈述是否自洽（原文称 checks the arithmetic a report states about itself）。</li>
+<li>在 16 次保存运行上跑这个脚本：共找出 5 处矛盾，全部出在同一次运行里。</li>
+<li>运行条件：不需要 API key、不需要 Phoenix 服务，约 5 分钟跑完（作者原文口径）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>115.7% 的评级分布被原评测 + 人工标注双双放行（已实现，仓库保存数据）</li>
+<li>86 行脚本找出 5 处矛盾 / 16 次运行（已实现，可按原文方法复算）</li>
+<li>编辑注：本日抓取 Medium 原文只读到前段（页面截断），脚本全文与逐条矛盾清单未逐行核到，发布前须打开原文后段与仓库再核一次；标题与摘要数字已与搜索索引口径交叉一致。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>本条的核心资产不是提示词，而是检查清单结构（按原文方法还原）：</p>
+<p>```</p>
+<p>对智能体的每一份报告，先跑代码检查，再谈内容质量：</p>
+<ol>
+<li>报告里所有“占比/分布”加总是否等于 100%（允许 ±[0.5]% 舍入）</li>
+<li>报告里引用的总数与分项之和是否相等：[总数] = Σ[分项]</li>
+<li>同一数字在标题、摘要、正文三处是否一致</li>
+</ol>
+<p>任一项不过 → 整份报告打回，并记录是哪一次运行、哪一条检查</p>
+<p>（不要让写报告的同一个模型来做这项检查，用确定性代码）</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>任何让智能体出“带数字的报告”的场景都能直接搬：周报、竞品分析、财务汇总、客服质检。先花半小时把“加总、占比、总数对分项”三类算术检查写成脚本挂在报告生成之后，比先买评测平台便宜得多，也更容易向老板解释为什么打回。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>算术自洽 ≠ 内容正确：分布加起来等于 100%，数字本身仍可能是编的；这只是第一道最便宜的门，后面仍需来源核对与人工抽查。</li>
+<li>样本只有 16 次保存运行、且全部来自一个研讨会演示智能体，不许外推成“所有智能体报告的错误率”。</li>
+<li>原文后段未逐行核到（见结果段编辑注），发布前必须补核，这是本条的硬条件。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@chewloongnian/your-claude-agents-analyst-split-added-up-to-116-a-free-code-eval-catches-it-6d7dcbc897b4</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
