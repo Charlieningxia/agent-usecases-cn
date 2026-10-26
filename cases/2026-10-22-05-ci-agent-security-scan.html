@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta"> · 评分  · 状态：</div><h1></h1><div class="meta">作者/出处：<br>原文：<a href="" rel="nofollow noopener"></a><br>日期： · 工具：<br>成本： · 耗时：</div><p>title: 让扫描器替你查 CI 里的智能体后门：760 个仓库逐个手读，无偏样本里 38% 能被外人驱动（公开数据可复算）</p>
+<p>category: 调研数据</p>
+<p>score: 77</p>
+<p>status: 已实现（公开方法与清单可复算；作者为扫描器厂商，利益关系同屏标注）</p>
+<p>source_author: node9（dev.to 机构署名 @node9_ai；个人姓名未给出）</p>
+<p>source_url: https://dev.to/node9_ai/we-read-760-repositories-that-run-ai-agents-in-ci-444f</p>
+<p>source_date: 2026-10-12</p>
+<p>tools: [node9 scan-repo（npx 免账号）, GitHub Actions 配置]</p>
+<p>cost: $0（托管扫描免费、本地 npx 免费；厂商后续报告服务未标价，与本条无关）</p>
+<p>time_needed: 给自己一个仓库做五问自查约 10 分钟，跑扫描约 5 分钟</p>
+<p>---</p>
+<h2>速览卡</h2>
+<ul>
+<li>分类：调研数据 / 编程搭建</li>
+<li>结果：760 个在 CI 里跑智能体的公开仓库逐个手读；无风险提示线索的那批 571 个里 38% 存在“外人可驱动智能体或权限过大”，116 个仓库属严重档（外人文本能碰到带密钥/写令牌/ shell 的智能体）</li>
+<li>状态：已实现（方法、口径与干净仓库清单公开；有问题仓库不公开点名）</li>
+<li>成本：$0</li>
+<li>耗时：读者自查约 10 分钟</li>
+</ul>
+<h2>一句话</h2>
+<p>只要你的仓库让智能体读 Issue 又给它真工具，任何路人写一段话就可能是在给你的智能体下指令——这项调查把这件事在 760 个真实仓库里数了一遍，并给了一张 10 分钟自查表。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>收集 760 个在 GitHub Actions 里跑 Claude / Codex / Gemini 等智能体、或在仓库里提交了智能体配置的公开仓库，固定到同一提交逐个手读（每仓至少读两遍、部分三遍），只回答一个问题：外人能对这个智能体做什么？</li>
+<li>样本分两股并分开报：189 个是按已知危险设置（如 <code>allowed_non_write_users: &quot;*&quot;</code>）搜来的，83% 有问题；另外 571 个只是按“CI 里有智能体”收集、无风险线索，38% 有问题——标题里的“3/10”用的是后一股，全样本合计是 49%，三个口径同屏给出，不挑大的报。</li>
+<li>问题归成四种形状：外人可直接对话驱动（282 仓，含“标签门”被模板/bot 自动贴上等于没门）、配置住在仓库里让每个贡献者的编辑器预批准命令（61 仓）、智能体在陌生人 fork 的代码里运行（24 仓）、PR 标题/分支名被拼进 shell 命令（7 仓）。</li>
+<li>数清“被劫持后能拿到什么”：280 仓智能体握写令牌、222 仓握密钥或 API key、136 仓有任意命令 shell、52 仓的危险面不在 CI 而在贡献者本机。</li>
+<li>用自家扫描器与手读逐仓对账：349 个有问题 + 275 个干净的仓库上，扫描器报问题时手读 314/314 全部同意，干净仓库零误报，漏检约一成；另与通用 linter zizmor 对比（zizmor 在 287 个干净仓里报了 265 个，问题不在准头在问法不同）。发现已私下报告 13 个项目，3 个已修、1 个已确认。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>无偏股：571 仓中 38% 有问题（已实现，公开口径可复算）；严重档全样本 116 仓</li>
+<li>大仓更好但没关上门：5 万星以上 59 仓里仍有 13 仓带各级问题（口径见原文表）</li>
+<li>扫描器精度：报问题 314 次手读全同意（作者自测对账，厂商利益同屏标注）；召回约九成</li>
+<li>处置进展：已私报 13 个项目、3 个已修复、1 个已确认（作者自述）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（本篇资产是五问自查表，据原文还原；不是提示词，是配置审查清单）</p>
+<p>```</p>
+<p>给任何“读 Issue/PR 的智能体”上线前过五问：</p>
+<ol>
+<li>谁能启动它？issues / issue_comment / pull_request_target / workflow_run 都能被外人触发吗？</li>
+<li>门开着吗？grep -rn allowed_non_write_users .github/workflows/ —— 出现 &quot;*&quot; 配写令牌 = 谁都能驱动；</li>
+</ol>
+<p>   若门是标签，查模板或 bot 会不会自动贴这个标签；</p>
+<ol>
+<li>它在谁的代码里跑？若 checkout 的是 fork 的 PR 头，智能体读的是陌生人的 CLAUDE.md 与钩子；</li>
+<li>它够得着什么？环境里有令牌/云凭证，被劫持就等于交钥匙；</li>
+<li>工具收窄了吗？Bash(gh issue label:*) 只做一件事，裸 Bash 什么都能做。</li>
+</ol>
+<p>原则一句话：要么让所有人都能跟它说话，要么给它真工具，两样不能同时给。</p>
+<p>自查工具：npx node9-ai scan-repo &lt;owner&gt;/&lt;repo&gt;（免账号、只读配置、不运行代码）</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内用 Gitee Go / 极狐 GitLab CI / 自建 Runner 接智能体的团队同理：先按五问查一遍自己的流水线，尤其是“机器人读工单/Issue 自动修 bug”这类最常见的接法。工具是 GitHub 生态的，清单本身与平台无关；把第 2 问换成自家平台的“允许非成员触发”设置即可。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>厂商研究：作者就是扫描器 node9 的厂商，对账精度与召回都是自测口径；好在手读方法、样本口径与干净清单公开，他人可复算，引用时保留厂商标注。</li>
+<li>样本不是随机抽样：两股收集方式不同，38% 只适用于“无线索股”的收集口径，不能外推成“全 GitHub 的比例”。</li>
+<li>93 个仓库因答案取决于仓库外设置或并无智能体参与被剔除出所有数字（作者自注）；有问题仓库不点名，读者无法逐仓复核问题侧清单，这是负责任披露与可复核性之间的取舍，须明说。</li>
+<li>自查表只答“外人能不能驱动”这一个问题，不替代完整的 Actions 安全审计（如动作版本固定、凭证持久化等问题 zizmor 那类工具问得更全）。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://dev.to/node9_ai/we-read-760-repositories-that-run-ai-agents-in-ci-444f</p>
+<p>干净仓库清单与托管扫描（原文给出）：node9.ai/scan</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
