@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体分工写代码：单个 PR 成本从 $3.59 降到 $2.14，一个 5 小时额度从 10 个 PR 做到 16 个 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 85 · 状态：已实现（作者自测账本；美元数为 Claude Code 按 API 价算出的会话成本，作者实付为每月 20 欧元固定 Pro 费，不是这个数）</div><h1>让智能体分工写代码：单个 PR 成本从 $3.59 降到 $2.14，一个 5 小时额度从 10 个 PR 做到 16 个</h1><div class="meta">作者/出处：Andrea Grandi<br>原文：<a href="https://www.andreagrandi.it/posts/claude-code-subagents-to-save-usage/" rel="nofollow noopener">https://www.andreagrandi.it/posts/claude-code-subagents-to-save-usage/</a><br>日期：2026-10-07（搜索引擎更新时间；原文页未标发布日） · 工具：Claude Code、 Claude Pro（Opus 5.5 / Sonnet 5.5 / Haiku 5.5）<br>成本：Claude Pro 每月 20 欧元固定费用；美元数字只是按 API 价折算的比较标尺，不产生额外账单 · 耗时：照搬作者的 4 个智能体文件 + CLAUDE.md 约一晚上；之后每个 PR 不再多花时间</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：同样中等努力度下，单个 PR 成本从 $3.59 降到 $2.14（降约 40%）；每个 PR 占 5 小时额度从约 10% 降到约 6%，一个额度窗口能做的 PR 从约 10 个变约 16 个</li>
+<li>状态：已实现（作者自测账本；美元数为 API 价折算标尺，实付为 20 欧元/月固定费；PR 更大：平均新增行数从 248 行变 392 行）</li>
+<li>成本：Pro 固定月费内，无额外支出</li>
+<li>耗时：搭好分工约一晚上</li>
+</ul>
+<h2>一句话</h2>
+<p>别让最贵的模型从头干到尾：主会话只做决策，写代码交给 Sonnet 子智能体、摸清任务交给 Haiku、提交交给 Haiku——作者实测每个 PR 便宜约 40%，省额度不是因为小模型便宜，而是主会话不再被测试输出和修复过程撑大。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>定分工（4 个子智能体，全部写在 <code>~/.claude/agents/</code> 的 Markdown 文件里）：</li>
+</ol>
+<p>   - <code>implementer</code>：Sonnet 5.5，中等努力度，Read/Write/Edit/Grep/Glob/Bash——写代码、写测试、跑检查，直到通过。</p>
+<p>   - <code>scoper</code>：Haiku 5.5，中等努力度，只读 + 计划模式、最多 12 轮——接陌生任务先出简报（目标、验收标准、相关文件、测试、拆分可能），每条结论必须指向文件。</p>
+<p>   - <code>shipper</code>：Haiku 5.5，低努力度，Read/Bash——只做提交、推送、开 PR；预检不过（无关文件、缺 changelog、分支是 master）就停下报告，绝不自己修、不 force-push。</p>
+<p>   - <code>reviewer</code>：Opus 5.5，只在作者要求或改动触及安全、并发、数据迁移、公开 API 时才出场；日常评审由主会话自己做，第二遍 Opus 评审“几乎和写代码一样贵”。</p>
+<ol>
+<li>用一份用户级 CLAUDE.md 把分工钉死：任务够清楚就交给 implementer；小改动（几十行、主会话已完全知道怎么写）留在主会话——写交接文档和审 diff 的成本不比直接写低；implementer 只执行不重新设计，计划与代码冲突且需要大判断时必须报回；主会话审 diff 时不信 implementer 的“测试通过了”口头结论，必须自己看 diff、读关键代码、跑全量相关测试。</li>
+<li>固定会话流程：给 issue 号 → 不熟的任务先跑 scoper（主会话抽查它点名的文件，联网核查留在主会话）→ 主会话定方案 → 把计划、验收标准、文件、已定决策、验证命令交给 implementer → 主会话读 diff、跑全套测试，有问题用 SendMessage 发回同一个 implementer（保住它的上下文，别新开一个）→ 作者要 PR 时交给 shipper。</li>
+<li>立计量规矩：给状态栏脚本加几行，每当 5 小时或 7 天额度百分比变化，就往 <code>~/.claude/usage-log.jsonl</code> 写一行（时间、会话、模型、两个百分比、会话成本）；再把每个会话与记录里的 <code>gh pr create</code> 调用对上，算出每个 PR 的成本。作者同时声明了三处可能让数字变好的处理：并行会话的额度增长只算一次；排除一个发布日会话（8 个 PR、25% 额度、$10.67，全是微小版本 bump，算进去会显得更好看）；scoper 和 shipper 是几天前才加的，大部分行只有 implementer 在干活。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>对照组（改分工前、纯 Opus 5.5 中等努力度、开单个 PR 的会话）：24 个会话、24 个 PR，平均每个 PR 新增 248 行，成本 $3.59（已实现，作者按同一方法重算）</li>
+<li>实验组（Opus 主会话 + 子智能体）：10 个会话、13 个 PR（3 个会话各开 2 个 PR），平均每个 PR 新增 392 行，成本 $2.14（已实现，作者按同一方法重算；Claude Code 直接显示的 10 个会话合计为 $30.05、80% 额度，折合 $2.31/PR，作者说明自己的算法比 Claude Code 显示低几个百分点，只用于两组比较）</li>
+<li>降幅：单个 PR 成本降约 40%（$3.59 → $2.14）；单个 PR 占 5 小时额度从约 10% 降到约 6%，一个窗口能做的 PR 从约 10 个变约 16 个（已实现，作者自测）</li>
+<li>省在哪：主会话平均请求数从 75 降到 54，单次请求上下文从 119k token 降到 107k token——作者原以为省在 Sonnet 便宜，实测把子智能体 token 全按 Opus 价算也只贵 5%；真正省的是主会话不再反复重读测试输出和修复过程（已实现，作者自测）</li>
+<li>附带变化：写作时 Sonnet 5.5 缓存读取价从 $0.20/百万 token 降到 $0.10/百万 token，作者重算后 10 个会话为 $27.31（原 $27.84），即 $2.10/PR——帮助很小，因为子智能体只占会话 token 的一小部分（作者自述）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的分工骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>主会话只做四件事：[理解任务] + [定方案与拆分] + [审 diff、跑全套测试] + [拍板完成]。</p>
+<p>implementer（Sonnet）：接 [issue 号] + [验收标准] + [相关文件] + [已定决策与边界] + [验证命令]；只执行、不重新设计；冲突需要大判断时报回。</p>
+<p>scoper（Haiku，计划模式、只读、12 轮封顶）：出 [目标] + [验收标准] + [相关文件与测试] + [拆分可能]；每条结论附文件路径；主会话抽查后再定方案。</p>
+<p>shipper（Haiku，低努力度）：只做 [预检] + [按名暂存] + [提交] + [推送] + [开 PR]；预检不过就停下报告，不修、不 force-push。</p>
+<p>reviewer（Opus）：仅 [作者要求] 或 [安全/并发/迁移/公开 API] 时出场；日常不叠加第二遍评审。</p>
+<p>小改动不分工：[几十行且已完全清楚] 就主会话直接写，交接成本高于收益。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内用 Claude Code / Cursor / Codex 的读者都能搬：先给最常见的三类子任务（跑测试、查代码、提交）各写一个模型字段明确的智能体文件，再在 CLAUDE.md 里写死“什么分工、什么不分工、主会话必须自己审 diff”。别先升级套餐——作者的账本说明，额度多半是被主会话反复重读测试输出吃掉的，不是模型不够贵。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>美元数是标尺不是账单：作者实付每月 20 欧元固定 Pro 费；$3.59/$2.14 是 Claude Code 按 API 价算出的会话成本，只能用于两组比较，不许写成“每月省了多少钱”。</li>
+<li>样本小且单人：对照 24 个会话、实验 10 个会话，两个副业项目（Draft Omen、Book Corners），不同项目、不同改动规模下数字会变。</li>
+<li>额度百分比无小数：Claude Code 只报整数百分比，“&lt;1%”表示当周计数器没动；并行会话会互相污染日志，作者只做了“每次增长算一次”的处理，仍非严格隔离。</li>
+<li>分工本身有成本：写交接、审 diff、来回修都要 token；小改动、判断重的改动（架构重构、安全、复杂迁移）作者明确主张留在主会话。</li>
+<li>价格已变：Sonnet 缓存读取价在写作时下调，照搬时以你当时的价目为准；Pro 额度规则也可能调整。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://www.andreagrandi.it/posts/claude-code-subagents-to-save-usage/</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
