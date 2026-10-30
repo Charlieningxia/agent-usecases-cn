@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体说“完成”之前先过一道硬门禁：220 次 Stop 里脚本拦下 95 次，漏检数作者自承无法统计 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 84 · 状态：已实现（作者真实日志；10 天、244 次门禁运行；漏检数无法统计，作者自承）</div><h1>让智能体说“完成”之前先过一道硬门禁：220 次 Stop 里脚本拦下 95 次，漏检数作者自承无法统计</h1><div class="meta">作者/出处：Raphael Pantaleão<br>原文：<a href="https://medium.com/@raphaelpanta/my-ai-agent-said-done-220-times-a-shell-script-said-no-to-95-of-them-d60338ec8579" rel="nofollow noopener">https://medium.com/@raphaelpanta/my-ai-agent-said-done-220-times-a-shell-script-said-no-to-95-of-them-d60338ec8579</a><br>日期：2026-10-14 · 工具：Claude Code hooks（Stop hook）、 Gradle verify + Pitest + Stryker、 ktlint/detekt/eslint、 GitHub Actions PR 门禁<br>成本：$0 额外支出（笔记本跑 Gradle；门禁总耗时 13.2 小时是时间成本，不是现金）；每文件门禁每次 +47 秒 · 耗时：简化版（Stop 门禁 + 20 行 loop-guard 测试）一天可搭；全套三门禁 + PR 门禁 + 变异测试为作者系列工程，非一日完成</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：2026-10-02 至 10-11，门禁日志 244 行；Stop 门禁跑 220 次：放行 92 次、拦截 95 次、跳过 33 次；10 月 3 日晚连续拦截 19 次；红 verdict 中位 142 秒 vs 绿 293 秒；门禁总耗时 13.2 小时</li>
+<li>状态：已实现（作者真实日志；漏检数无法统计）</li>
+<li>成本：$0 额外现金；时间成本 13.2 小时/10 天</li>
+<li>耗时：简化版一天可搭</li>
+</ul>
+<h2>一句话</h2>
+<p>智能体说“做完了”最不可信的时候，就是它说得最顺的时候：作者在一个 Kotlin 微服务单体仓里给 Stop 装了一道硬门禁——10 天里它跑 220 次、拦下 95 次，其中一晚连续拦 19 次；作者的结论是，每次都通过的门禁只是装饰，拦得比放行多的门禁才在干活。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>分清“建议”与“墙”：作者引用 Böckeler 的 harness 定义——指南（事前 steering：指令、模板、宪法）只是建议；传感器（事后反馈：编译器、lint、测试、拦截型 hook）才是墙；并引用 Anthropic 文档：CLAUDE.md 是 advisory，hook 给的是确定性控制。</li>
+<li>立三道门禁（写进宪法第 8 条，feature 001 先建门禁再写业务）：</li>
+</ol>
+<p>   - 每文件门禁：每次 Write/Edit 后触发；Kotlin 跑 ktlint + detekt + 最多 20 个同名前缀测试类，TypeScript 跑 eslint + tsc + prettier + vitest related；预算 300 秒、报告上限 60 行，失败 exit 2 拦住智能体；</p>
+<p>   - Stop 门禁：智能体说 done 时触发，跑全仓 <code>./gradlew -q verify</code>（check + 各域 Pitest + 前端 lint 测试 + 增量 Stryker），预算 1200 秒共享时钟，exit 2 = 不许停；</p>
+<p>   - PR 门禁：GitHub 上重跑 verify + 变异棘轮 +“PR 新增行上的存活变异必须在描述里说明”+ hook 自身测试套件，是分支保护唯一要求的状态。</p>
+<ol>
+<li>Stop hook 四条规则（作者说“最值得抄进任何项目”的是第四条）：</li>
+</ol>
+<p>   - 无相关变更 2 秒跳过（以 marker 文件比时间戳；10 天跳过 33 次）；</p>
+<p>   - 可 bypass 但留痕（HOOK_BYPASS=1 跳过一次、写 bypass.log；PR 模板强制填“Gate bypasses”一节，缺了 PR 门禁直接失败；10 天只用 1 次，理由还是排练）；</p>
+<p>   - 共享时钟跑完全部检查，超预算的检查记 TIMEOUT，不留后台进程；</p>
+<p>   - 绝不连续拦两次（stop_hook_active 为真时改以 systemMessage 呈现同一报告、exit 0 放行；平台本身 8 次连拦才兜底，作者收紧到 2 次；20 行 loop-guard 测试覆盖 4 种状态）。</p>
+<ol>
+<li>输出格式也是需求：成功时静默（Gradle --quiet、只报 FAILED、npm loglevel=error）；失败时只给“门禁名 + 可粘贴的精确命令 + 每检查最多 40 行 + 被截行数”，因为读者是上下文有限、不能往上翻的模型。</li>
+<li>给门禁本身写测试：23 个测试脚本 + 假 gradlew/npm/npx 的 fixture 单体仓，PR 门禁在独立小 runner 上跑；1349 行 shell 全过 shellcheck -S warning。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>Stop 门禁 220 次：放行 92、拦截 95、跳过 33（已实现，作者日志）</li>
+<li>10 月 3 日晚连续拦截 19 次（19:08 UTC 起至午夜后），作者当时大多没在看（已实现，作者日志）</li>
+<li>10 月 8 日起翻转：门面就位、测试套件稳定后，连续放行 19 次、每次约 5 分钟——门禁没变软，是代码变好了（已实现，作者日志）</li>
+<li>红 verdict 中位 142 秒 vs 绿 293 秒（Gradle 在首个失败模块即停；全通过必须跑全部模块）；10 天门禁总耗时 13.2 小时；每文件门禁每次 +47 秒（已实现，作者日志）</li>
+<li>每文件门禁 90 分位 50 秒（目标 60 秒内）；全门禁中位 293 秒、90 分位 515 秒（目标通常 15 分钟内）（已实现，作者日志）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的门禁骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>先定墙、再写业务：[宪法/规则里写死门禁]，[每文件门禁] + [Stop 门禁] + [PR 门禁] 三道，缺一道都不算完工。</p>
+<p>Stop 门禁四条规则：[无变更 2 秒跳过] + [bypass 可走但必须留痕、PR 模板强制披露] + [共享时钟、超时记名] + [绝不连续拦两次：第二次以 systemMessage 呈现报告并放行、告警给人]。</p>
+<p>输出格式定死：[成功静默] + [失败只给门禁名 + 可粘贴命令 + 每检查 40 行上限 + 截断计数]，因为读者是模型、不是能翻屏的人。</p>
+<p>门禁本身也要测试：[测试脚本 + 假二进制 fixture 仓]，PR 门禁单独跑 hook 测试；[1349 行 shell 过 shellcheck] 只是作者的刻度，不是目标。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>自己用 Claude Code / Codex 的读者，今天就能先抄最值钱的两件：一是 Stop 门禁的“绝不连续拦两次”（20 行测试脚本可直接仿写），二是“成功静默、失败 40 行”的输出格式——前者防智能体在“done—被拦—done”里空转，后者省上下文。Gradle/Kotlin 栈可换成自己的 npm test / pytest / go test，但三条要保留：跳过无变更、bypass 留痕且 PR 模板强制披露、共享时钟防后台残留。作者的提醒也要一并带上：门禁 10 天吃掉 13.2 小时，6 人团队感受会完全不同——先在个人仓跑一周、看拦截率再决定上不上团队。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>漏检数无法统计：作者自承“我能告诉你 Stop hook 拦了 95 次，但说不出它没拦住多少坏改动——没有这种日志”；拦截率高不等于覆盖率高，传感器从不触发也可能是瞎子。</li>
+<li>传感器本身是智能体写的测试：作者引用 Böckeler 的质疑——对 AI 生成的测试寄予厚望“还不够好”；他的对冲是变异测试（Part 3 主题），且自承“不是完整的答案”。</li>
+<li>每文件门禁数据不完整：日志里只有 24 行每文件记录、对不上几百次编辑，作者自承原因未找到（可能子智能体的 hook 输出没写进同一文件）；引用每文件数字时要带上这个缺口。</li>
+<li>成本是时间不是现金：13.2 小时跑在作者笔记本上；团队规模、机器性能、测试套件大小都会改这个数，不能直接抄。</li>
+<li>强绑定单一栈：门禁 tied to 一个仓库、Gradle、Claude Code 的 stop_hook_active 协议；作者自述一旦平台改协议、测试会报警、但仍得自己修。</li>
+<li>与已发布案例的边界：本站已有 Anthropic 代码审稿流水线（2026-10-20-02，审稿是“看代码”）与 CI token 分流；这篇是“拦住智能体说完成”的确定性门禁 + 10 天真实拦截日志，机制与证据都不同。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@raphaelpanta/my-ai-agent-said-done-220-times-a-shell-script-said-no-to-95-of-them-d60338ec8579</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

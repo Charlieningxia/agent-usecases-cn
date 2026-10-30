@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>给智能体的每一步装上电表：36 步实测里“只读”的 Reviewer 吃掉 27% 的电 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">调研数据 · 评分 77 · 状态：仅测试未验证（黑客松原型；10 天、36 步；能量仅指 GPU 板载能量，不含 CPU 与整机插座；两台机器模型不同，不可直接比效率）</div><h1>给智能体的每一步装上电表：36 步实测里“只读”的 Reviewer 吃掉 27% 的电</h1><div class="meta">作者/出处：Tomáš Rampas<br>原文：<a href="https://medium.com/@tomas.rampas/i-put-a-power-meter-on-every-agent-in-my-workflow-here-is-what-i-learned-6d6bd472bec5" rel="nofollow noopener">https://medium.com/@tomas.rampas/i-put-a-power-meter-on-every-agent-in-my-workflow-here-is-what-i-learned-6d6bd472bec5</a><br>日期：2026-10-28 · 工具：Agent Joules（作者 .NET 10 命令行工具与库）、 NVML（NVIDIA 管理库，C# P/Invoke 调用）、 Microsoft Agent Framework、 NVIDIA NIM、 Nebius AI Cloud（H100 80GB 租卡）<br>成本：H100 租卡含搭建与校准共 1.5 GPU 小时、约 $7；笔记本一侧电费按 €0.30/kWh 折算全程 €0.0028；托管档能量为 N/A（无可触 GPU） · 耗时：读 10 分钟 README 可上手复现思路；完整 36 步实测需自有 NVIDIA GPU 或租卡，非纯 30 分钟快赢</div><h2>速览卡</h2>
+<ul>
+<li>分类：调研数据</li>
+<li>结果：同一工作流（3 任务 × 3 次重复 × 4 智能体 = 36 步）：笔记本 RTX 3080 Ti 全程约 8 分钟、净 33,134 焦耳；H100 全程 51 秒、净 10,390 焦耳；两档里最费电的都是 Researcher 与 Reviewer（笔记本档 Researcher 28%、Reviewer 27%、Planner 21%）；笔记本 36 步全程被约 78W 软件功耗墙限速</li>
+<li>状态：仅测试未验证（黑客松原型；能量仅 GPU 板载）</li>
+<li>成本：租卡约 $7；笔记本电费不到 1 欧分</li>
+<li>耗时：复现思路 10 分钟起；完整实测需 GPU 或租卡</li>
+</ul>
+<h2>一句话</h2>
+<p>大家谈智能体成本只谈 token 价，作者偏要谈焦耳：他给 Microsoft Agent Framework 每个智能体的每一步都装上电表，10 天、36 步测下来发现——“只负责读”的 Reviewer 一点不便宜，吃掉 27% 的电，因为读得多同样要预填充算力。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>起因：Nebius × NVIDIA 全球 AI 黑客松要求跑在 Nebius、用 NVIDIA 开放模型、拿出能跑的东西；作者注意到所有 agent 框架都报 token 数与耗时，没人报能量——而“短回答让 GPU 拼命想”可能比“长回答轻松过”更费电。</li>
+<li>计量方法（核心可抄点）：每个 agent 配自己的聊天客户端，客户端包一层计量中间件；模型调用前读一次 NVML 能量计数器，调用后读一次，差值就是这一步的能量——归属由构造决定（中间件创建时就带 agent 名），不用事后对日志猜归属。再减掉运行前安静窗口测到的空闲功耗，得到净能量；每个数字带标签：measured / estimated / model-judged / N/A / not-reported，缺失写 N/A，绝不写 0（作者说这条规则不止一次救了他）。</li>
+<li>四档对照：同一工作流（3 任务、3 次重复、4 智能体，共 36 步）跑四档——笔记本本地 NIM、Nebius 云 GPU 上 NIM、Nebius Token Factory、build.nvidia.com；托管档没有可触 GPU，能量诚实地记 N/A，只报 token、延迟与价格。</li>
+<li>笔记本档：RTX 3080 Ti Laptop GPU，Nemotron Nano 4B 经 NIM 容器，全程约 8 分钟、净 33,134 焦耳；按作者电价 €0.30/kWh 折算 €0.0028（不到 1 欧分）——作者自承“笔记本上 AI 的能量不是钱的问题”，但结构有意思：Researcher 28%、Planner 21%、Reviewer 27%（“只读”并不便宜，预填充也要能量）；且 36 步全程被 Windows 电源模式约 78W 的软件功耗墙限速——作者说自己以前所有“笔记本上模型有多快”的数字，其实都是“78W 下有多快”，工具现已把限速写成每步的 flag，否则就是“遗漏式撒谎”；另有基线不稳定 flag（笔记本 GPU 还要带屏幕、与其他应用共享）。</li>
+<li>H100 档：Nebius 云上租 1 张 H100 80GB，NIM 容器跑 nemotron-3-nano FP8，同一 36 步：51 秒、净 10,390 焦耳；含搭建与校准共 1.5 GPU 小时、约 $7；计量代码在 Linux 上无需改动（同一 P/Invoke 换 Linux NVML 库）。作者特意提醒：两档模型与机器都不同，这不是“H100 比笔记本省 3 倍电”，只是表里两行；工具从不平均、不排名——但两档形状相似：Researcher 与 Reviewer 都是贵的。</li>
+<li>诚实规则的两次救场：质量法官模型在笔记本档 3 步上返回 HTTP 429、每步重试 5 次后放弃，旧版代码会写质量 0，新规则写 N/A 并附原因——作者称“能信任 0 的结果文件，比漂亮图表值钱”；另有演示教训：评委没有 GPU 与 API key，于是最后两天把仪表盘改成“浏览器里回放已录制的真实运行流”，无需服务器与 key 即可看真实功耗图（回放页已公开）。</li>
+<li>作者自列的 10 天教训：先测基线并看方差；先定标签再写数字；大 GPU 晚点租、脚本先写好（贵的不是模型跑的那一小时，是你打字的那一小时）；演示要做到“没你也能跑”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>笔记本档：约 8 分钟、净 33,134 焦耳、折算 €0.0028；Researcher 28% / Reviewer 27% / Planner 21%（仅测试未验证，黑客松原型）</li>
+<li>H100 档：51 秒、净 10,390 焦耳；租卡 1.5 GPU 小时约 $7（仅测试未验证，黑客松原型）</li>
+<li>限速 flag：笔记本 36 步全程触约 78W 功耗墙（仅测试未验证，单机样本）</li>
+<li>法官 429：3 步重试耗尽后记 N/A 而非 0（仅测试未验证，黑客松原型）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的计量骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>按步计量、按构造归属：[每个 agent 独立客户端] + [调用前后各读一次能量计数器]，差值即该步能量；归属写在 [中间件构造参数] 里，事后不对日志。</p>
+<p>先减空闲、再报净值：[安静窗口测基线] + [看基线方差]，不稳定就打 [基线不稳定 flag]；限速、共享 GPU 等干扰同样打 flag，不藏。</p>
+<p>标签先行：[measured / estimated / model-judged / N/A / not-reported]，缺失写 [N/A + 原因]，绝不写 0；0 必须可信。</p>
+<p>跨档不排名：[不同模型、不同机器] 只并列成行，[不平均、不比效率]；形状相似（谁贵）才是可讲的结论。</p>
+<p>演示离线化：[录制真实运行流] + [浏览器回放]，评委/读者无 GPU、无 key 也能看真实图表。</p>
+<p>租卡策略：[脚本先写好] + [大 GPU 晚点租]，贵的不是跑的那一小时，是打字的那一小时。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>跑多智能体工作流、关心 token 账单之外“到底谁在烧钱”的读者，可以先抄两件不花钱的事：一是给每步结果加“标签 + flag”制度——缺失写 N/A、限速与基线不稳要显式标注，作者的原话是“能信任 0 的结果文件比漂亮图表值钱”；二是把“只读的 Reviewer 也贵”这个结构记下来：做成本优化时别只砍生成量，输入侧的预填充同样烧能量与 token，Reviewer、评审、复核类 agent 是优先审计对象。有 NVIDIA GPU 的读者可直接跑作者开源的 Agent Joules（README 称 10 分钟上手）；无 GPU 的读者可先看公开回放页理解“每步能量”的形态，再决定要不要花约 $7 租卡复现。注意：国内电价与作者 €0.30/kWh 不同，€0.0028 这个数不要直接抄，只抄“不到 1 欧分量级”这个量级感。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>黑客松原型：10 天、36 步、单工作流、单机样本；作者自承是起点，后续才做更多任务、更多重复、第二台机器、按地区算 CO₂e。</li>
+<li>能量口径窄：仅 GPU 板载能量（NVML），不含 CPU、内存与整机插座；托管档能量为 N/A，只能比 token、延迟与价格。</li>
+<li>两档不可比效率：笔记本与 H100 的模型（Nemotron Nano 4B vs nemotron-3-nano FP8）与机器都不同，10,390 焦耳 vs 33,134 焦耳不能读成“3 倍效率”，作者已明说工具不排名。</li>
+<li>成本锚点会变：$7 租卡价、€0.30/kWh 电价均为作者当时当地口径，读者复现前请按自己的云厂商与电价重算。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@tomas.rampas/i-put-a-power-meter-on-every-agent-in-my-workflow-here-is-what-i-learned-6d6bd472bec5</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
