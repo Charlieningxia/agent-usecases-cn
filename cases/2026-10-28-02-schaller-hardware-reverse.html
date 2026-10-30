@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体啃没有文档的硬件：没有 Linux 驱动的胶片扫描仪，几小时出第一张可用扫描 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 84 · 状态：已实现（作者自测；单台设备、单帧对比，作者自承扫描与相机“不是完美、只是明显变好”）</div><h1>让智能体啃没有文档的硬件：没有 Linux 驱动的胶片扫描仪，几小时出第一张可用扫描</h1><div class="meta">作者/出处：Christian F.K. Schaller<br>原文：<a href="https://blogs.gnome.org/uraeus/2026/10/15/aiandreverseengineerhardware/" rel="nofollow noopener">https://blogs.gnome.org/uraeus/2026/10/15/aiandreverseengineerhardware/</a><br>日期：2026-10-15 · 工具：Claude Code、 hw-harness（作者公开的通用抓包对比工具）、 KVM 虚拟机、 usbmon<br>成本：hw-harness 开源免费；Claude Code 订阅价原文未给（&gt;$50/月档须自行核对）；另需一台 Windows 虚拟机与被测硬件本身 · 耗时：照搬抓包对比法搭环境约半天；作者扫描仪首张可用扫描在几小时内、几天后近乎完善，笔记本相机从早上到当天结束</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：无 Linux 驱动的新款 Plustek OpticFilm 8200i（Genesys GL128，USB 07b3:1825），几小时内出第一张可辨认的 Linux 扫描、几天后成近乎完善的 SANE 后端（含红外扫描）；同机同底片 3600 dpi 下作者驱动 34.6 秒、上游 SANE 开发版 54.4 秒；ThinkPad X1 Carbon Gen 14 笔记本相机低光帧亮度 31.1 → 90.9</li>
+<li>状态：已实现（作者自测；单台设备、单帧对比）</li>
+<li>成本：工具免费，模型订阅价原文未给</li>
+<li>耗时：搭环境约半天；单设备见效以小时到一天计</li>
+</ul>
+<h2>一句话</h2>
+<p>给没有驱动的硬件写驱动，最磨人的不是写代码，而是对着十六进制抓包一行行猜：作者让 Claude Code 去啃这个苦活——用厂商 Windows 驱动在虚拟机里跑一遍、把 USB 流量录下来，再跟自己的 Linux 驱动跑出来的流量一比，差出来的地方就是 bug 清单。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先卡住再换路：作者为一箱老底片买了 Plustek 8200i，到手才发现芯片已换成 Linux 不支持的 GL128；此前凭感觉让 Claude 猜寄存器、反编译 Windows 驱动、买 USB 分析仪、买可远程断电的插座让 Claude 自己给扫描仪断电重启，折腾数月、基本放弃。</li>
+<li>转折点来自一条 X 帖：Tom Crider（Glorious Eggroll）用 AI 工具修鼠标驱动的做法——让智能体完全控制一个 Windows 实例去采集修驱动所需的数据。作者把这条帖子直接粘给 Claude，让它照着给扫描仪搭同样的 Windows 虚拟机。</li>
+<li>搭“参照—对比” harness（后整理成开源 hw-harness，作者注明自己项目当时用的是定制脚本、不是这个打包版）：</li>
+</ol>
+<p>   - 参照会话：厂商 Windows 驱动在 KVM 虚拟机里跑，真实设备直通进虚拟机；</p>
+<p>   - 宿主机外抓包：Linux 宿主机用 usbmon 录流量，抓包层在直通层之下，虚拟机看不见它；</p>
+<p>   - 自己驱动同样操作再跑一遍、同样抓包；</p>
+<p>   - 两份出自同一仪器的流量一 diff，差异就是驱动 bug 清单；智能体负责解码抓包、写验证探针、核对常量。</p>
+<ol>
+<li>对没有总线可 tap 的内置设备换招：ThinkPad MIPI 相机走 Windows 侧检查——INF 文件、注册表、ACPI 表、设备属性；还接了一个 USB 摄像头让 Claude 对比两路采集，这是相机案的关键。</li>
+<li>真机验真才算数：扫描仪后端支持彩色/灰度/红外/彩色+红外、300–7200 dpi、8/16 位、红外除尘除划痕、密底片曝光倍率；相机案修了内核 IMX471 驱动（裁剪 bug、测试图案寄存器位宽、模拟增益上限低约 1.8 档）与 libcamera 软件 ISP（补镜头阴影校正、修白平衡统计位深错误），补丁已提交上游审稿。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>扫描仪首张可用扫描：几小时内（有质量问题、但 100% 可辨认）（已实现，作者自测）</li>
+<li>几天后近乎完善的后端：含红外扫描（已实现，作者自测）</li>
+<li>同机同底片 3600 dpi：作者驱动 34.6 秒 vs 上游 SANE 开发版 54.4 秒，细节解析力相同（已实现，单台单帧对比）</li>
+<li>笔记本相机：早上开工、当天结束时内核 + libcamera 补丁齐备；低光帧亮度 31.1 → 90.9，红/绿与蓝/绿比 0.890/0.672 → 1.047/0.823，接近 USB 摄像头参照；低光下蓝色仍差约 17%（已实现，作者自测）</li>
+<li>附带产出：用同一方法写的 GNOME 负片扫描应用 Negative Vibes（Rust，16 位线性 + 红外层无损出图）</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的 harness 骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>先拿到一个能跑的参照：[厂商驱动 + Windows 虚拟机 + 真实设备直通]，跑一次 [目标操作]。</p>
+<p>在参照看不见的地方抓包：[宿主机 usbmon]，不要在虚拟机内抓。</p>
+<p>用自己的驱动重复同一操作、同样抓包；让智能体 [diff 两份流量]，输出 [差异清单 = bug 清单]，逐项写探针验证。</p>
+<p>没有总线可 tap 的内置设备：改走 [Windows 侧检查：INF/注册表/ACPI/设备属性]，并接一个 [同类参照设备] 做对比采集。</p>
+<p>每条结论只认真机：[在真实硬件上跑过] 才算数；单台单帧的结果要写明是单数据点。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>手头有 Linux 下没驱动的老设备（扫描仪、摄像头、打印机、采集卡）的读者可以直接抄这套“参照—对比”法：关键不是让模型凭空写驱动，而是先给它一个能跑的参照和一份抓包，再让它做差异——人负责判断“这次是不是变好了”，模型负责啃几千行抓包。没有 Windows 授权或直通条件的，先从作者的 hw-harness 文档看一遍成本再动手；也别跳过最后一步：作者自己提醒，扫描仪与相机都只是“明显变好”，不是完美。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>单台单帧：扫描速度对比是同一台扫描仪、同一张底片的一次对比，不是标准基准；换设备、换底片要重测。</li>
+<li>上游已平行支持：作者做到一半才发现 SANE 上游 2026-09 已提交同款扫描仪支持——作者自己把本项目定性为概念验证，并预期大家最终会用上游驱动；抄之前先查上游是否已支持你的型号，别重复造轮子。</li>
+<li>人仍是裁判：作者明言“没有驱动知识的人不知道该让 Claude 看哪里”，此前数月的蛮力试错就是教训；模型啃的是 tedium，判断“有没有变好”还得靠人拿着真机看。</li>
+<li>不碰代码复制：这套方法只观察硬件行为、提取配置数据，不复制厂商驱动代码；涉及固件与驱动分发时仍要看各发行版与上游的规则。</li>
+<li>成本未给：原文没写 Claude Code 花了多少钱与多少 token，复现预算要自己先跑一小段再估。</li>
+<li>与已发布案例的边界：本站已有“Claude 写 Helm 应用”“零账单站点”等“从零建东西”案；这篇是“给没文档的硬件逆向驱动”，问题与验证方式（真机 + 抓包 diff）都不同。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://blogs.gnome.org/uraeus/2026/10/15/aiandreverseengineerhardware/</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
