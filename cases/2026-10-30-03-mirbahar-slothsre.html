@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体把 96 条凌晨告警压成 2 簇：阅读量降 99.04% 的基准演示 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 73 · 状态：仅测试未验证（基准演示，非真实值班周；省 42 分钟为作者自称的换算，非生产实测）</div><h1>让智能体把 96 条凌晨告警压成 2 簇：阅读量降 99.04% 的基准演示</h1><div class="meta">作者/出处：Robina Mirbahar<br>原文：<a href="https://medium.com/@robinamirbahar/slothsre-napops-an-overnight-gemma-4-adk-agent-that-compresses-418-lines-of-3-am-alerts-into-a-c7656732c736" rel="nofollow noopener">https://medium.com/@robinamirbahar/slothsre-napops-an-overnight-gemma-4-adk-agent-that-compresses-418-lines-of-3-am-alerts-into-a-c7656732c736</a><br>日期：2026-10（Medium 仅显示月份，精确日期未核到） · 工具：本地 Gemma 4（google/gemma-4-27b-it，Ollama/vLLM）、 Google ADK、 Pydantic v2、 Sentry Agent Tracing、 FastAPI<br>成本：开源免费，本地跑模型 $0 token 费不等于 $0 总成本（硬件成本原文未给） · 耗时：一命令可复跑基准；照搬三阶段结构到自己告警约一天</div><h2>速览卡</h2>
+<ul>
+<li>分类：编程搭建</li>
+<li>结果：96 条夜间告警、418 行日志 → 2 个事件簇、4 行摘要，阅读量降 99.04%，作者自称每次夜班省 42 分钟翻日志</li>
+<li>状态：仅测试未验证（基准演示，非真实值班周；Hacktoberfest 参赛稿；省 42 分钟为换算值，非生产实测）</li>
+<li>成本：开源免费；本地模型硬件成本未给</li>
+<li>耗时：一命令复跑基准；迁移约一天</li>
+</ul>
+<h2>一句话</h2>
+<p>凌晨 3 点的告警从来不是 96 件事，而是 2 件事被吵了 96 遍：作者用本地模型 + 三阶段智能体跑了一套夜间告警基准，把 418 行日志压成 4 行摘要——但这只是基准演示，不是真实值班周，省 42 分钟是换算值，别当成已省下的工时。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先定基准再谈省时：96 条夜间告警、418 行日志全部是同一套演示数据，不是某周真实值班记录；输出只认“簇 + 摘要 + 可执行补丁”，不认模型自夸。</li>
+<li>三阶段串起来，不是一步到位：Google ADK 的 SequentialAgent 依次跑 NoiseFilter（去噪）→ SandboxPatch（沙箱里出补丁）→ TwoLineBrief（两行简报）；Pydantic v2 强 schema 卡住输出格式，Sentry Agent Tracing 留下每步轨迹。</li>
+<li>每簇都给可验证的补丁证据：Redis 连接池耗尽簇（62 条/310 行）附 pytest 312.4ms、18 个断言；Pydantic webhook 枚举缺 <code>refund_queued</code> 簇（34 条/108 行）附 184.6ms；补丁一命令可提 PR（<code>git apply … &amp;&amp; gh pr create --fill</code>）。</li>
+<li>看板与复跑都留出口：FastAPI 看板（端口 8095）看簇与摘要；一命令 <code>python scripts/run_slothsre_demo.py</code> 可复跑整套基准；仓库开源（github.com/RobinaMirbahar/slothsre-napops）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>压缩：96 条告警、418 行 → 2 簇、4 行摘要，阅读量降 99.04%（仅测试未验证，基准演示）</li>
+<li>省时换算：作者自称每次夜班省 42 分钟人工翻日志（仅测试未验证，换算值，非生产实测）</li>
+<li>补丁证据：Redis 簇 pytest 312.4ms、18 个断言；webhook 簇 184.6ms（仅测试未验证，基准内数字）</li>
+<li>成本：开源免费；本地跑 Gemma 4 的硬件成本原文未给，$0 token 费不等于 $0 总成本</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>先给基准再给结论：[固定告警集：条数/行数] + [输出只认簇 + 摘要 + 补丁证据]，不拿演示数据报生产收益。</p>
+<p>三阶段分工写死：[去噪：把重复告警并成簇] → [沙箱出补丁：补丁必须附测试耗时与断言数] → [两行简报：只写簇 + 动作]，每步留轨迹。</p>
+<p>格式用 schema 卡住：[Pydantic 强类型] 约束簇结构与摘要行数，模型不能用一段散文蒙混过关。</p>
+<p>补丁要能一命令提 PR：[git apply] + [gh pr create --fill]，提不出去的补丁不算数。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>值班、运维、跑定时任务的读者能直接抄两点：一是“先并簇再读”——夜里被告警吵醒时，先让脚本把重复告警并成簇、每簇只读一行摘要，而不是逐条翻；二是“补丁附证据”——每个簇的修复必须带测试耗时与断言数，否则只是换了个地方的猜测。注意：本地跑 27B 模型需要显卡与显存，个人电脑跑不动时可先只抄“并簇 + 两行简报”的结构、用小模型或规则脚本代替。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>基准演示不是生产：96 条告警是演示数据，非真实值班周；省 42 分钟是作者换算值，没有真实夜班对照；引用时必须带“仅测试未验证”。</li>
+<li>参赛稿背景：Hacktoberfest Week 3 参赛稿，演示完整度优先于生产鲁棒性；告警源、误报率、漏报率在基准外未给。</li>
+<li>硬件成本未给：本地 Gemma 4 的显卡、显存、电费都不在文中；照搬前先在自己机器上测一命令复跑的耗时与资源占用。</li>
+<li>与已淘汰项目区分：SlothSRE 与此前淘汰的 SlothTidier、SlothOps 是不同项目，勿混淆；与已发布 CI 安全扫描、欧盟黑箱扫描不同问题（本篇是告警压缩，不是扫描）。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@robinamirbahar/slothsre-napops-an-overnight-gemma-4-adk-agent-that-compresses-418-lines-of-3-am-alerts-into-a-c7656732c736</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

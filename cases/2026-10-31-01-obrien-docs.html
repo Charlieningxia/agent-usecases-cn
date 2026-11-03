@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体 4 天写完一整套产品文档：55 页、59 张截图，改版后一键重拍 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 76 · 状态：已实现（已上线；省时无手工基线对照）</div><h1>让智能体 4 天写完一整套产品文档：55 页、59 张截图，改版后一键重拍</h1><div class="meta">作者/出处：Debs O&#x27;Brien<br>原文：<a href="https://dev.to/debs_obrien/how-i-documented-an-entire-product-in-4-days-with-an-ai-agent-3338" rel="nofollow noopener">https://dev.to/debs_obrien/how-i-documented-an-entire-product-in-4-days-with-an-ai-agent-3338</a><br>日期：2026-10-13（更新日；首发日未在正文显示） · 工具：Goose（Block 开源智能体）、 Peekaboo（macOS 自动化）、 Swift Vision OCR、 Pillow、 pngquant/optipng、 Playwright CLI、 Rspress + Zephyr Cloud<br>成本：Goose 本身免费开源；模型 API 成本原文未给；截图管线需 macOS（Peekaboo 为 macOS 专属）；部署用 Zephyr Cloud（原文未给费用） · 耗时：搭三技能约半天起步；复用后整套文档按作者 4 天冲刺计（含返工）</div><h2>一句话</h2>
+<p>给开源智能体 Goose 立三条“技能”（写作规范、截图清单、发布核验），4 天从零写出一套 55 页、带 59 张截图、可公开核查的产品文档，界面中途大改版也不用手工重拍截图。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>先分阶段，不直接喊“写全部文档”。</strong> 定了 Phase 0–6：重组旧稿 → 上手指南 → 日常使用 → 进阶功能 → 设置项 → 截图与交叉链接 → 全应用扫一遍找漏网功能（这一步真抓到了内嵌浏览器、代码编辑器面板等此前完全没文档的功能）。</li>
+<li><strong>立三个技能，让规范只写一次：</strong></li>
+</ol>
+<p>   - <code>write-docs</code>（513 行）：语气、版式（UI 元素加粗、用户可见文本斜体、输入内容用代码格式）、页面模板（先写用户看到什么，不写内部实现）、交稿前核验清单（无 emoji、无破折号、截图已登记、构建通过无死链）。</p>
+<p>   - <code>doc-screenshots</code>（478 行指令 + 1,722 行工具代码）：截图全部写进一份 YAML 清单——每张截图声明去哪拍、点什么、裁哪里、画面里必须出现哪段文字；跑清单即可批量重拍，另有 <code>--audit</code>（逐项走导航报哪张拍坏了）和 <code>--compare</code>（新旧并排对照）模式。</p>
+<p>   - <code>docs-preview</code>（155 行）：构建后把真实 URL 从日志里 grep 出来再用，杜绝智能体“凭记忆编 URL”导致的 404。</p>
+<ol>
+<li><strong>截图管线走操作系统层，不走浏览器自动化</strong>（因为被写产品是 Tauri 桌面应用，Playwright 够不着）：Peekaboo 找窗口、点可见文字 → <code>--retina</code> 以 2 倍分辨率截图 → Swift Vision OCR 定位文字 → Pillow 加高亮 → pngquant/optipng 压缩（体积减 50–60%）。</li>
+<li><strong>分工验真</strong>：Peekaboo 验应用本身，Playwright CLI 验文档站渲染（H1、图片加载、侧栏、目录），构建通过不等于页面没错。</li>
+<li><strong>人不离场</strong>：作者明说这不是“一键挂机”——每页都经过她审阅、改结构、定取舍；截图清单是“咖啡时间”跑（全量重拍 15–20 分钟，期间不能动鼠标键盘）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>4 天冲刺交付：55 页文档、59 张截图、81 次提交、约 24,000 词、3 个技能，文档站已上线可公开核查（docs.theaiplatform.app）。状态：<strong>已实现</strong>。</li>
+<li>节奏账本：第 1 天只做规划与改名（4 提交）；第 2 天一晚上跑完 Phase 0–4（12 提交，约 90 分钟）；第 3 天 43 提交，含一次侧栏大改版——改几个导航步骤、跑一次清单，59 张截图几分钟内全部重拍（手工重拍不可比）；第 4 天收尾 + 全面审校后合并。</li>
+<li>截图清单自检：写稿时跑 <code>--audit</code>，59 张中 50 张通过，失败全是测试数据变了（频道改名、流程被删），导航本身没坏。</li>
+<li>发布循环：55 页 + 59 图构建到上线 URL，作者实测 1.8 秒。</li>
+<li><strong>短板（稿内必须写明）</strong>：没有“手工写要花几天”的基线对照，省时是推断不是实测；模型 API 成本原文未给；作者与被写产品为同一方（Zephyr Cloud 的 AI Platform 文档），但方法与产出站均可公开核查。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li>技能文件骨架（可直接抄结构，不抄原文大段）：</li>
+</ul>
+<p>  ```</p>
+<p>  # &lt;技能名&gt;</p>
+<p>  ## 语气与版式（写死：什么加粗、什么斜体、禁什么）</p>
+<p>  ## 页面模板（先用户所见，后内部原理；一节一个意思）</p>
+<p>  ## 禁止文档清单（内部实现、特性开关后的功能不写）</p>
+<p>  ## 交稿核验清单（内容项 + 截图项 + 构建项，逐项走完才提交）</p>
+<p>  ```</p>
+<ul>
+<li>截图清单条目骨架：</li>
+</ul>
+<p>  ```yaml</p>
+<p>  - id: &lt;路径/截图名&gt;</p>
+<p>    output: &lt;图片保存路径&gt;</p>
+<p>    crop: window | main</p>
+<p>    description: &lt;画面应含什么&gt;</p>
+<p>    steps: [点什么、等几秒]</p>
+<p>    cleanup: [按 Esc 复位]</p>
+<p>    validate: [&lt;画面必须出现的文字&gt;]</p>
+<p>  ```</p>
+<ul>
+<li>查漏提示词（作者实测有效）：“把这张截图里所有可点项列出来，对照现有文档，标出还没写到的功能。”</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li>智能体产出是“质量不错的初稿”，不是终稿：作者每页都改过结构与措辞，不审校就发会出事实错误（她审校时就抓到过自相矛盾的开户说明、裁切过松的截图、重复内容）。</li>
+<li>OCR 会误读（如 &quot;Get update&quot; 读成 &quot;Get undate&quot;）：技能里要写子串匹配、锚点文字消歧、坐标点击兜底，关键步骤加 <code>continue_on_failure</code> 防止一次失败拖垮整批。</li>
+<li>截图期间独占屏幕：全量审计约 10 分钟、重拍 15–20 分钟，期间动鼠标键盘会打断；macOS CI 尚跑不了（需要已登录的图形会话与无障碍/录屏权限）。</li>
+<li>macOS 专属：Peekaboo 与 Vision OCR 只在 macOS 上成立，Windows/Linux 读者需换等价工具链。</li>
+<li>成本未给：Goose 免费，但所接模型按 API 计费，跑 55 页的量级请先在小批量上实测 token 账单再全量铺开。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
