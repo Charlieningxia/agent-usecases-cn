@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体每夜 3 点自动激活信用卡 offer：6 个月 1,700+ 个，Amex 实省 $286.63 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 79 · 状态：已节省（作者自述，6 个月实测；Amex $286.63 有截图佐证）</div><h1>让智能体每夜 3 点自动激活信用卡 offer：6 个月 1,700+ 个，Amex 实省 $286.63</h1><div class="meta">作者/出处：George Xing<br>原文：<a href="https://georgexing.substack.com/p/how-i-built-a-bot-that-activates" rel="nofollow noopener">https://georgexing.substack.com/p/how-i-built-a-bot-that-activates</a><br>日期：2026-11-02 · 工具：Mac mini 常驻 + 开源 Browser Use CLI + Codex 智能体（v1）→ Hermes（OpenClaw 系）+ 1Password 凭证库（v2）<br>成本：Codex/Hermes 订阅价原文未给；Mac mini 为已有硬件，成本未计入；曾试用 CardPointers（$99/年）后认为过剩而弃用 · 耗时：搭建约数小时；跑起来后零人工，每夜自动执行</div><h2>一句话</h2>
+<p>George Xing 让智能体每夜 3 点自动登录 Chase 和 Amex，把新出的信用卡 merchant offer 全部点掉激活：6 个月激活 1,700+ 个 offer，Amex 白金卡截图显示实省 $286.63，合计返现“几百美元”——再也不怕 offer 过期作废。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先试过 CardPointers（$99/年），觉得功能过剩，只想要“自动激活全部 offer”这一个功能，决定自己搭。</li>
+<li>v1（Mac mini + launchd 定时）：每夜 3 点 wrapper 脚本 <code>cards-fire.sh</code> 编排全流程——确定性脚本 <code>cards-auth.py</code> 从 1Password 取凭证登录 Chase 和 Amex（凭证与智能体隔离，智能体不碰密码）；Codex 智能体用开源 Browser Use CLI 打开 offer 页逐个点击激活、核对已添加；完成后登出，并发 Telegram 每日汇总。</li>
+<li>解决两个坑：① Browser Use 的 <code>eval</code> 按焦点 tab 执行，Chase/Amex 流程会跑串——自写小脚本 <code>cdp-eval.sh</code> 直连 Chrome DevTools 端口，按域名选 tab；② 银行约 30 分钟无操作就登出，机器人必须每跑登录一次——靠 1Password 凭证库 + 确定性登录脚本解决（2FA 作者称从未触发，推测是设备识别所致，属侥幸，不可依赖）。</li>
+<li>v2（2026-09-11 后迁移到 Hermes）：Hermes 凭证库上线（<code>browser_vault_list</code> / <code>browser_vault_fill</code>，智能体经 1Password 登录而不见密码），且 Browser Use 新版 <code>switch_tab(tab_id)</code> 按 tab ID 定位——四个自写组件（<code>cdp-eval.sh</code>、<code>cards-auth.py</code>、<code>cards-fire.sh</code>、3am launchd 任务）全部可以删掉，改由 Hermes 内置 cron 在 3 点触发，智能体全程自理：登录→逐个点击并核对→记录每次点击→登出→发 Telegram 汇总。</li>
+<li>v1/v2 两版代码均在 GitHub 公开 repo，可对照。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自述，6 个月实测）：Amex 白金卡页面截图——462 个 offer 已添加，实省 <strong>$286.63</strong>；作者称 6 个月合计返现“几百美元”（several hundred dollars，未给精确总数）</li>
+<li>数字口径（成稿须显眼写清）：1,700+ 个 offer、“面值 $25k+”是 <strong>offer 面值，不是省下的钱</strong>——成稿不得把 $25k 写成省下的钱；实省以 $286.63（Amex 截图）+“几百美元”合计为准</li>
+<li>过程佐证：Telegram 每日汇总截图——2026-10-02 一天激活 6 个 Chase + 76 个 Amex offer；2026-10-30 激活 3 个 Chase + 6 个 Amex；作者发现 Amex 每月 1 号集中放 offer，次日即被机器人扫掉</li>
+<li>附赠观察（非结果）：作者文末讨论 offer 机制可能被智能体套利拖垮（Patrick Collison 同款判断），可作风险段素材</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（原文无逐字提示词，成稿按流程转写为任务骨架）</p>
+<p>```</p>
+<p>[每夜 3 点执行：登录 Chase 与 Amex 的 offer 页]；</p>
+<p>[把全部未激活的新 offer 逐个点掉，逐个核对状态确为“已添加”]；</p>
+<p>[登录与登出由确定性脚本/凭证库处理，智能体不直接接触密码]；</p>
+<p>[跑完汇总本次激活数量（分卡、分商家），发 Telegram 给我]；</p>
+<p>[遇到 2FA、登录失败或页面结构变化时停下并通知我，别重试蛮干]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内信用卡没有完全相同的 merchant offer 机制，但思路可迁移：各银行 App 里的领券、返现、积分活动同样“不领就作废”，可让智能体定时登录银行网页/App 汇总可领权益、先只读提醒你手动领。注意两点：① 国内银行登录验证更严（短信验证码是常态），全自动登录难度与封号风险比美国更高，先从“只读汇总 + 提醒”做起，别直接自动点；② 绝不要把银行卡密码明文交给智能体，照抄作者的凭证隔离设计（密码库 + 确定性登录脚本，智能体只拿操作权、不见密码）。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：$25k 是 offer 面值不是实得；实省以 $286.63（Amex 截图）+“几百美元”合计为准；Chase 侧省额未单独给出</li>
+<li>合规风险（成稿须显眼标注）：银行自动登录可能违反银行服务条款、有封号风险；作者本人亦写明 2FA 靠设备识别侥幸未触发——换设备、换 IP、银行改风控都可能触发验证导致机器人卡住</li>
+<li>成本口径：Codex/Hermes 订阅价原文未给；Mac mini 为已有硬件，成本未计入；成稿不写总成本 $0</li>
+<li>适用边界：只适合手里有 Chase/Amex 这类 offer 机制信用卡的读者；offer 本身会改变消费习惯，作者自述刻意不看已激活的 offer 以免多花钱</li>
+<li>去重说明：与已发布 2026-10-17-02（Claude 审计信用卡订阅，第一天拿回 $700）不同任务——彼为审订阅，此为激活返现 offer；与已发布 2026-10-17-01（查各州政府无人认领财产库）不同任务；与第 24 批 2026-11-09-03（扫邮箱找待领 payout）同属省钱账单大类但任务不同——彼为扫邮箱，此为每夜自动点 offer</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://georgexing.substack.com/p/how-i-built-a-bot-that-activates</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

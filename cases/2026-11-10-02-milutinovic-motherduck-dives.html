@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>用 MotherDuck Dives 做仪表盘：Superset 一周的活，一天做完 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 72 · 状态：已节省（作者自测，单次对照实验；作者自承“数字来自一次测试，请当作我的结果而非基准”）</div><h1>用 MotherDuck Dives 做仪表盘：Superset 一周的活，一天做完</h1><div class="meta">作者/出处：Ana Milutinovic<br>原文：<a href="https://medium.com/arconsis/a-week-in-superset-a-day-in-motherduck-dives-c9fd3f1f3267" rel="nofollow noopener">https://medium.com/arconsis/a-week-in-superset-a-day-in-motherduck-dives-c9fd3f1f3267</a><br>日期：约 2026-11-07（Medium 标“3 days ago”，原文页未标精确日期，成稿日期须写“约 11 月 7 日”并注明为推算） · 工具：Claude Code + MotherDuck MCP + MotherDuck Dives<br>成本：MotherDuck 与 Claude 订阅价原文均未给 · 耗时：首版约 0.5 小时；成品约一天（含学习工具的时间）</div><h2>一句话</h2>
+<p>数据可视化专家 Ana Milutinovic 把同一个仪表盘做了两遍：Apache Superset 路线要 5 个自定义 React 插件、30+ 次提示词修订、8+ 小时才出首版、一周才可用；MotherDuck Dives 路线只用 2 次提示词修订、0.5 小时出首版、约一天成品——前提是数据已经是清洗好的“golden layer”。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>同一仪表盘，两种做法对照：目标是两张带四级下拉的表 + 一张用户可自由加列的透视表，另加品牌页眉页脚。</li>
+<li>Superset 路线：5 个自定义 React 插件，配 5 个智能体分工（Analytics 澄清问题、Design 管设计规范、UI 写 React 插件、Grill 挑毛病、Judge 拍板上线）；30+ 次提示词修订、8+ 小时才跑通第一个插件、一周才可用；上线后每次改动都要在 Kubernetes 上重新部署 Superset。</li>
+<li>Dives 路线：Claude Code 一行命令接 MotherDuck MCP（<code>claude mcp add MotherDuck --transport http https://api.motherduck.com/mcp</code>）；写一封 8 节结构提示词（DATA / AUDIENCE AND PURPOSE / STRUCTURE / FILTERS AND INTERACTION / VISUAL DESIGN / WORDING / EXPORTS / OUT OF SCOPE），明确说“create a Dive”让智能体存为 Dive 而非一次性图表。</li>
+<li>结果：2 次提示词修订、0.5 小时出首版、约一天成品（含学习工具的时间），三 tab、筛选器齐全，还自动多了一个没要的“点击数字看明细”弹窗；换终端风主题只用约 3 分钟，一句话提示词即可。</li>
+<li>关键前提（成稿须显眼标注）：数据是一张已清洗、join 与指标都算好的扁平表（golden layer）——作者自述“这是对智能体最友好的情况”，多表原始数据未测；作者全文自承“数字来自一次测试，请当作我的结果而非基准”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自测，单次对照）：提示词修订 30+ 次→2 次；首版 8+ 小时→0.5 小时；可用成品一周→约一天（含学习工具）；换主题约 3 分钟</li>
+<li>结果口径（成稿须显眼标注）：n=1 单次对照实验，非基准；作者原话“The numbers come from one test, so read them as my results, not as a benchmark”；Superset 一周包含手工搭仪表盘、设筛选器、绕日期筛选、套品牌设计等后续手工活，Dives 一天为成品时间，两边口径均为作者实际花费时间</li>
+<li>附赠（非结果）：Dive 是纯 React + SQL，可直接打开改代码，Git 工作流开发/预览/部署均有；作者认为客户提案场景可用匿名数据的 Dive 一天做出可点击 demo</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（原文 8 节样例提示词全文可抄，成稿转写为骨架；完整逐字版见原文）</p>
+<p>```</p>
+<p>[DIVE：&lt;仪表盘名&gt;]；</p>
+<p>[DATA：数据源 &lt;库.表，或多表及 join 方式&gt;；一行代表什么；关键列及含义/单位/取值；排除哪些列/值/记录；敏感字段如何处理；数据 quirks（缺失、重复、更新频率）]；</p>
+<p>[AUDIENCE AND PURPOSE：谁用、什么设备、多常用；要回答的问题 1/2/3；细节粒度]；</p>
+<p>[STRUCTURE：约 3 个 tab，分别放哪些指标/图表；默认状态（时间范围、预选筛选、着陆 tab）]；</p>
+<p>[FILTERS AND INTERACTION：筛选器（单选/多选、可搜索）；点击行为（下钻或交叉筛选）；共享链接是否带筛选器]；</p>
+<p>[VISUAL DESIGN：主题；颜色 hex；字体；图标风格；logo；无障碍（对比度 ≥4.5:1）]；</p>
+<p>[WORDING：语气；用词规则；空态与加载态文案]；</p>
+<p>[EXPORTS：导出格式与文件命名]；</p>
+<p>[OUT OF SCOPE：明确不做的]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>这是给“要给客户或老板快速出仪表盘”的人的快赢：先把数据洗成一张干净的扁平表（join 与指标先算好），再让智能体按 8 节提示词生成。国内读者注意两点：① golden layer 前提是成败关键——数据没洗干净就别指望一次成，先花时间把表 join 好；② MotherDuck 是海外服务，国内同类可用支持 MCP 的 BI/数据库工具平替思路（提示词结构本身通用），但成本与接入方式须按实际工具重核，别照抄原文的一行命令。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：单次对照实验（n=1），非基准；作者自承数字只代表她自己的结果；Superset 与 Dives 两边工作量口径不完全对称（Superset 含部署与手工搭仪表盘）</li>
+<li>数据前提：golden layer——数据须先清洗、join 好、指标算好，否则结果不成立；多表原始数据未测</li>
+<li>日期口径：发布日期为推算（Medium 标“3 days ago”，原文页未标精确日期），成稿须写“约 11 月 7 日”并注明推算</li>
+<li>成本口径：MotherDuck 与 Claude 订阅价原文均未给，成稿不写成本数字</li>
+<li>利益披露（成稿须保留）：MotherDuck 为厂商产品；作者为 arconsis 数据可视化专家、非 MotherDuck 员工；文中引用的 Artefact 基准作者本人已标注为 MotherDuck 合作伙伴内容（vendor benchmark 须当提示而非证据）；MotherDuck 自家“用好上下文的智能体查询错误更少”的测试亦为厂商基准，非独立证明</li>
+<li>去重说明：库内无“仪表盘搭建提速”同任务；与已发布 2026-10-21-04（依赖图谱）、2026-10-23-05（Claude 写 Helm 应用）不同任务</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/arconsis/a-week-in-superset-a-day-in-motherduck-dives-c9fd3f1f3267</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

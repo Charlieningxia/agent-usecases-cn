@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体自主循环写代码：周期 3.5 小时→38 分钟 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 74 · 状态：已节省（作者自测，两个工程团队 30 天生产数据）</div><h1>让智能体自主循环写代码：周期 3.5 小时→38 分钟</h1><div class="meta">作者/出处：Sumit Singh<br>原文：<a href="https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301" rel="nofollow noopener">https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301</a><br>日期：2026-11-01 · 工具：Claude Code CLI（claude -p）、 150 行 Python 状态机 agent_runner.py、 pytest、 AST 校验<br>成本：单 PR 平均 $0.31 tokens；Claude 订阅/套餐价原文未给 · 耗时：脚本本身一天可跑；背景是 4 个月团队迁移，不是“一天建成整套流水线”</div><h2>一句话</h2>
+<p>Sumit Singh 的团队弃用 CrewAI（800 行定义、$45 没解出一票），改用 Claude Code CLI + 150 行确定性 Python 状态机做自主循环：两个工程团队 120 张票、30 天生产数据，bug 修复与脚手架平均周期从 3.5 小时降到 38 分钟，单 PR 成本 $0.31。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先试 CrewAI 两周：800 行 agent 定义、循环委派，$45 API 账单没解出一张票——弃用。</li>
+<li>改用 150 行确定性 Python 状态机 agent_runner.py（原文全文附代码）：Claude Code CLI（<code>claude -p</code>）跑任务 → AST 校验 → pytest 沙箱跑测试 → 失败把报错喂回 agent 最多重试 3 次 → 通过则 git 提交 PR，失败则回滚。</li>
+<li>护栏是血泪换来的：v1.0 因 5 秒超时误判，把数据库迁移文件重写、600 行业务逻辑改成 nonsense，4 小时排障后收紧为 45 秒超时 + 禁写迁移/.env/生产配置/密钥目录。</li>
+<li>另外三条生产教训：上下文窗口一次读 25 个文件会掉质量（限文件数或 AST 切片）；无确定性停止条件会无限重构循环；测试套件必须 100% 确定、mock 掉网络 IO，否则 agent 会把 flaky 测试当成代码 bug 重写。</li>
+<li>分支隔离：永远不在 main 或共享分支上跑 agent，用 git worktree 开临时分支。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自测，团队 30 天生产数据，120 张票）：脚手架新端点 45 分钟→8 分钟（5.6x）、单测覆盖生成 30 分钟→4 分钟（7.5x）、flaky 测试调试 60 分钟→14 分钟（4.2x）；bug 修复/脚手架平均周期 3.5 小时→38 分钟；单 PR 平均成本 $0.31（tokens 2,100→14,200）</li>
+<li>诚实失败：v1.0 凌晨 2 点重写迁移文件、EC2 CPU 99.8% OOM，4 小时排障——护栏不是可选项，是生存装备</li>
+<li>标题“替换 80% 日常编码工作流”为作者 headline，表中无直接对应的 80% 口径——成稿须标注</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（本条的可复用物是 agent_runner.py 的状态机骨架，非原文逐字代码；完整 150 行脚本见原文）</p>
+<p>```</p>
+<p>[任务提示词] → [claude -p 跑任务] → [AST 校验 + pytest 沙箱（45 秒超时，--maxfail=2）] → [失败 → 把报错喂回 agent，最多 3 次] → [通过 → git 提交 PR；失败 → git checkout . 回滚]；</p>
+<p>[禁写路径：.env、migrations/、alembic/versions、config/production.json、secrets/]；</p>
+<p>[分支隔离：git worktree 开临时分支，绝不在 main 跑]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>这是给有测试套件的开发者的“自主循环”范本：别堆多智能体框架，150 行确定性代码 + 测试反馈循环就够。国内读者照做时注意两点：① 前提是你有 pytest/vitest 这类自动化测试套件，没有测试兜底就别放 agent 自主跑；② 先在 worktree 临时分支上试，禁写清单（.env、迁移文件、生产配置）先写死再开跑——作者 v1.0 的凌晨事故就是没做这两步。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：数据为两个工程团队 30 天汇总，非单人实测；无截图/日志佐证；标题“80%”在表中无直接口径</li>
+<li>时间口径：背景是 4 个月团队迁移，脚本本身一天可跑——成稿须写清不是“一天建成整套流水线”</li>
+<li>成本口径：单 PR $0.31 为 tokens 价；Claude 订阅/套餐价原文未给，成稿不写总成本</li>
+<li>安全提醒：原文脚本用了 <code>--dangerously-skip-permissions</code>，必须配合禁写路径与 worktree 隔离使用，绝不在 main 分支跑</li>
+<li>去重说明：与已发布 Ivanchenko 预设基准测试不同任务（彼为 5 档预设基准对照，此为自主循环 + 护栏的流程替换）；与第 23 批 Rangole hook 省钱不同机制（Rangole 是 hook 拦截 + 模型降级省用量，此为状态机 + 自我修正循环提速），不撞门槛 5</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

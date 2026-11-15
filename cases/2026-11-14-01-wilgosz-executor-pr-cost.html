@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体把需求写成一叠已评审的 PR：每 PR 实测成本约 $2.42 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 71 · 状态：仅测试（实测成本账本，非省钱结果）</div><h1>让智能体把需求写成一叠已评审的 PR：每 PR 实测成本约 $2.42</h1><div class="meta">作者/出处：Seb Wilgosz<br>原文：<a href="https://github.com/sebwilgosz/agent-executor" rel="nofollow noopener">https://github.com/sebwilgosz/agent-executor</a><br>日期：2026-11-13 · 工具：Claude Code、 Executor 插件、 gh-stack<br>成本：插件免费（MIT）；按 API 标价每 PR 约 $2.18–$2.58（Opus 评审 $0.95 + Sonnet 编排 $0.71 + 构建/验证/修复 $0.76）；订阅用户按用量额度计，不直接付美元 · 耗时：安装约 30 分钟；跑一次评审看仓库大小</div><h2>一句话</h2>
+<p>Seb Wilgosz 写了一个免费 Claude Code 插件 Executor：你给一份需求文档，它自动拆成特性、并行写代码、每个 PR 都经过构建、评审、验证、修复再交给你合并——他把 11 次真实构建的账单摊开：一个已评审的 PR 平均约 $2.42，其中 Opus 只做评审、其余全走便宜的 Sonnet。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先给 spec：用 <code>/executor:spec</code> 把笔记、RFC、Issue 或 Notion 文档写成需求文档；需求太薄时插件会先提问，每个问题附建议答案。</li>
+<li>人工批计划：插件把 spec 拆成特性和 PR 栈、写出检查清单，你先批计划；共享地基（schema、鉴权、骨架）单独先建一个 PR。</li>
+<li>并行构建：每个栈一个 Sonnet builder，各自在独立 worktree 里工作；先按 spec 写测试再写代码，一个步骤一个 commit，代码不能悄悄改写“完成”的定义。</li>
+<li>逐 PR 评审：每个 PR 先跑构建、lint 和测试（在一次性 worktree 里，不动你的工作区），再由一个 Opus reviewer 按 spec、测试、安全和你的仓库规范审 diff；Critical 问题不直接动手修。</li>
+<li>验证后再修：每个 Critical 发现单独派一个 Sonnet verifier，任务只有一个——证伪它；315 次验证运行至今推翻 18 项、降级 47 项；只有被证实的 bug 才派 fixer 写“先写失败测试、再修代码”，最多 3 轮。</li>
+<li>合并权在人：每个 PR 都是草稿 PR，排成 GitHub 栈；最后给出一块汇总——哪些能合、哪些有未决问题、按什么顺序合；合并由你点。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>仅测试（实测成本账本，作者自述、README 逐项列出）：当前版本（0.13.x）一个已评审的 PR 成本 <strong>$2.18–$2.58</strong>；4 个 PR 的一次构建总计 $9.69，合 <strong>$2.42/PR</strong>；另三次单 PR 构建分别为 $2.53、$2.58、$2.18。</li>
+<li>角色拆分（4-PR 构建）：评审（Opus）$0.95/PR；编排（Sonnet）$0.71/PR；构建、验证、修复（Sonnet）$0.76/PR。</li>
+<li>版本演进：0.10.0 时 $1.87/PR（9 个 PR）；0.12.0 时 $1.43/PR（测试改走 CI）；0.13.0 时 $2.33–$3.13/PR；0.13.x 把编排从 Opus 换成 Sonnet 后降到 $2.18–$2.58。</li>
+<li>验证机制实测：315 次 verifier 运行，推翻 18 项发现、降级 47 项——这是“评审发现先证伪再修”的实际运转数，不是省钱数。</li>
+<li><strong>这不是省钱结果</strong>：作者没说替他省了多少钱或多少小时，只给出了“一个已评审 PR 值多少钱”的实测账本；读者用它能回答“把需求交给智能体做 PR，预算该怎么算”。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文工作流转写；原文为插件命令与规则，非大段提示词照抄）</p>
+<p>```</p>
+<p>/executor:spec [需求笔记 / RFC / Issue / Notion 链接]</p>
+<p>→ 需求太薄时先回答插件的提问（每个问题有建议答案）</p>
+<p>人工批计划：拆成的特性、PR 栈、检查清单先由你确认</p>
+<p>/executor:build [spec 路径或文本]</p>
+<p>→ 先写地基 PR → 各栈并行构建 → 每个 PR：构建+测试 → Opus 评审</p>
+<p>→ Critical 发现 → verifier 证伪 → 证实后 fixer 修（最多 3 轮）→ 草稿 PR 入栈</p>
+<p>/executor:review [PR 号或分支]   # 只评审不构建，也能审人工写的 PR</p>
+<p>/executor:status                  # 看哪些栈现在能合</p>
+<p>```</p>
+<p>关键不在话术，在四条结构：① Opus 只做判断（评审），其余全走 Sonnet——这是成本账本成立的前提；② 确定性工作（开 PR、等 CI、贴状态）用脚本做，不占模型轮次；③ 测试先于代码、按 spec 写，构建者改不了“完成”的定义；④ 每个 Critical 发现先证伪再修，修之前必须先写失败测试。</p>
+<h2>中国读者怎么迁移</h2>
+<p>这套做法不依赖 Executor 本身：任何支持子智能体/并行任务的编程助手都能复现“评审 Opus + 其余 Sonnet”的分工与“先证伪再修”的流程，关键是把“每 PR 成本”当成预算指标来记——跑 3–5 个 PR 就能算出自己仓库的单价，再决定哪些需求值得交给智能体。国内读者注意：Claude Code 与 gh-stack 的可用性、API 计价与订阅额度因地区与套餐而异，先用一个小需求（1–2 个 PR）实测自己的单价再铺开；订阅用户付的是用量额度而非美元，角色间的成本比例仍可参考。</p>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>作者自推，须显眼说明</strong>：Executor 是作者本人的免费插件（MIT 开源），README 首页即挂 5 天免费邮件课与个人 newsletter 引流；本案价值在“实测成本账本”，不是第三方独立评测。</li>
+<li>样本小：作者原文自承只覆盖 11 次构建、每次 1–4 个 PR，且多为 Markdown 与 shell 仓库；你的仓库类型不同，单价会不同；小构建的单价看起来更贵（读 spec 与做计划的成本 1 个 PR 和 9 个 PR 差不多）。</li>
+<li>成本口径：按 API 标价（Opus $4/$20、Sonnet $2/$10 每百万 token，缓存读 $0.20）计算；订阅用户按用量额度计，美元数不直接适用；最便宜的一次构建（$2.18）是因为没发现 bug、没跑验证与修复轮次——bug 越多，每 PR 越贵。</li>
+<li>结果口径：只有成本账本与验证运行数，无省钱、省时总数；不要写成“省了多少钱”。</li>
+<li>门槛与前置：需 Claude Code、GitHub CLI（已登录）、gh-stack 扩展与 jq（可选）；PR 栈功能要求仓库开启 stacked PR；插件从不合并、不改测试、不碰 fork 的 PR，合并始终由人点。</li>
+<li>作者署名口径（请 Xiao 定夺）：作者全名 Seb Wilgosz 目前仅见其 GitHub 个人页显示名，README 与 Show HN 帖页内无署名 byline；与暂缓项 Geoff Cox（GitHub 同 handle 推断全名）属同一口径问题——若 Xiao 认为该推断不算门槛 1 通过，本案应改列暂缓。</li>
+<li>去重说明：与已发布代码评审案、CI token 路由案相邻但不同任务——本案是“把 spec 变成一叠已评审 PR 的完整工作流 + 每 PR 成本实测账本”，不是单次评审或 token 节流；与 2026-11-05 待审批的 Singh Claude hooks 案（防循环）亦不同。</li>
+</ul>
+<h2>原文链接</h2>
+<ul>
+<li>GitHub 仓库 README 全文（成本账本、工作流、安装步骤）：https://github.com/sebwilgosz/agent-executor</li>
+<li>Show HN 发布帖（2026-11-13，A 路直读核实；链接以 A 路报告为准，此处不另附未核链接）</li>
+<li>作者免费 5 天邮件课（原文引用，引流性质）：https://sebwilgosz.com</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

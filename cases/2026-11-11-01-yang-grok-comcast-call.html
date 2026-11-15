@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 Grok Bot 打电话谈宽带：Comcast 月费 $84 砍到 $45，还换到更快套餐 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 80 · 状态：已节省（作者自述，真实通话录音佐证；年省约 $500 为 $39×12 年化推算）</div><h1>让 Grok Bot 打电话谈宽带：Comcast 月费 $84 砍到 $45，还换到更快套餐</h1><div class="meta">作者/出处：Peter Yang<br>原文：<a href="https://www.youtube.com/watch?v=F-356TczoQU" rel="nofollow noopener">https://www.youtube.com/watch?v=F-356TczoQU</a><br>日期：2026-11-03 · 工具：Grok Bot 电话功能<br>成本：须 X Premium 订阅 $30/月起（按年付约 $25/月）；电话功能仅限美国号码，仍在分批推送中 · 耗时：一通电话约 25 分钟；事前准备竞品报价约 10 分钟</div><h2>一句话</h2>
+<p>Peter Yang 让 Grok Bot 真打电话给 Comcast 谈宽带：机器人自己过电话菜单、连拒三次推销、拿竞品 Sonic 光纤 $49/月的报价压价，25 分钟把月费从 $84 谈到 $45，还换到更快的套餐——全程录音公开，Musk 当天转发。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>事先给机器人一条竞品锚：Sonic 光纤在他所在地区 $49/月。</li>
+<li>机器人拨打 Comcast，独自通过电话菜单、和小客服寒暄，报出竞品价要求降价或同价提速。</li>
+<li>通话中 Comcast 三次推销 upsell，机器人全部拒绝；到接受最终条款前，机器人暂停下来，等 Yang 短信批准才成交。</li>
+<li>事后机器人发来摘要：新价格、有效期、费用、确认号。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自述，真实通话录音佐证）：月费 <strong>$84 → $45</strong>，同时换到更快套餐；一通电话约 25 分钟。</li>
+<li>数字口径（成稿须显眼写清）：“一年省近 $500”是作者说法，实为 <strong>$39×12=$468 的年化推算</strong>，并非已观测满 12 个月；$45 价为 Auto Pay 一年期价。</li>
+<li>网速档位口径：二手报道称从 400M 提到 500M，但作者原视频描述中未核实到具体档位，成稿只写“更快套餐”，不写 400→500。</li>
+<li>互证：Musk 2026-10-25 宣布 Grok Bot 可打电话；Yang 2026-11-03 发帖并放出录音后 Musk 当天转发；多家二手报道（PYMNTS、Teslarati 等）在日期、数字、流程上与作者视频一致。X 原帖逐字文本本次未直核到（x.com 直抓被策略屏蔽，不绕过），以作者本人 YouTube 实录视频为准。</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（ohcando 页逐字转录的可用提示词，按任务转写）</p>
+<p>```</p>
+<p>Call [运营商] about my internet bill. I pay [当前月费] a month and [竞品运营商] offers [竞品月费] a month in my area.</p>
+<p>Before you call, tell me which account details and security answers you need from me.</p>
+<p>On the call, ask for a lower price or a faster plan for the same price, turn down any upsells, and do not accept a new deal until I approve it.</p>
+<p>Afterward, send me a summary with the new price, how long it lasts, any fees and the confirmation number.</p>
+<p>```</p>
+<p>关键不在话术，在两条授权规则：① 事先给一条真实竞品价当锚；② 未经你批准不接受任何新 deal——机器人中途暂停等批复就是这条在起作用。</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内运营商没有“AI 替你打电话谈判”的同款功能，但两条打法可迁移：① 宽带/手机套餐续约前先查一家真实竞品价，拿着它去和客服谈，谈判时明确“降到 X 以下直接接受，高于 X 停下问我”；② 有在线客服/工单渠道的服务（云服务器、SaaS 续费），可让智能体用文字渠道去磨价，全程留痕、随时接管。注意：国内电话渠道对 AI 代打的接受度未知，先从文字渠道试，别直接让机器人冒充你打电话。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：年省约 $500 为年化推算；$45 为 Auto Pay 一年期价，一年后可能恢复原价；网速档位未核实到具体数字</li>
+<li>适用边界：Grok Bot 电话功能仅限美国号码、仍在分批推送，App 里没出现 Calls 入口就用不了；须 X Premium $30/月起</li>
+<li>合规与实操风险（成稿须显眼标注）：按 Grok Bot 服务条款（2026-10-31 更新），用户是通话的“caller of record”，通话须自报虚拟助手身份、可能被录音；部分客服会拒绝与 AI 通话——已有用户两次被挂断后改走在线客服；另有用户在验证环节被卡住需真人接手。随时准备接管，别把账号安全答案全交给机器人</li>
+<li>自推披露：作者视频描述含其付费会员与 newsletter（15 万+订户）引流；作者为创作者经济类博主，利益相关须披露</li>
+<li>去重说明：与已发布 2026-10-17-03（Chandra Bhavanasi 用 Meta Muse 文字渠道谈 AT&amp;T $80→$40）不同任务——不同作者、不同工具（Grok Bot 电话语音 vs Meta Muse 文字聊天）、不同运营商；本案首创“智能体真打电话谈判”这一新渠道，读者可复用的是电话谈判授权结构</li>
+</ul>
+<h2>原文链接</h2>
+<ul>
+<li>作者本人 YouTube 视频（带真实通话录音）：https://www.youtube.com/watch?v=F-356TczoQU</li>
+<li>X 原帖：@petergyang，2026-11-03（Musk 当日转发；本次未直核到逐字文本与 status ID）</li>
+<li>可复用提示词转录页：https://ohcando.com/ideas/have-ai-call-your-internet-company-and-cut-your-bill</li>
+<li>二手交叉：https://simpleaiexplain.com/2026/11/07/grok-phoned-comcast-and-cut-the-bill-84-to-45/ 、https://www.pymnts.com/news/artificial-intelligence/2026/grok-bot-calls-customer-service-but-humans-remain-on-the-hook/</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

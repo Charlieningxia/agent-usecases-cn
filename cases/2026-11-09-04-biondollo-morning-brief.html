@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体做晨间幕僚长简报：每天砍 2 小时杂务 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省时间行政 · 评分 76 · 状态：已节省（作者自述，正在日常使用）</div><h1>让智能体做晨间幕僚长简报：每天砍 2 小时杂务</h1><div class="meta">作者/出处：Tim Biondollo<br>原文：<a href="https://marketingagainstthegrain.com/articles/the-overnight-automation-that-kills-busywork" rel="nofollow noopener">https://marketingagainstthegrain.com/articles/the-overnight-automation-that-kills-busywork</a><br>日期：2026-10-21 · 工具：Claude Cowork（作者原工具；原文称 ChatGPT Workspace/Teams、Gemini + Google Workspace 亦可）<br>成本：Cowork 无单独定价，随 Claude 付费档（Pro $20/月起，年付约 $17/月；以 claude.com/pricing 为准，2026-10-22 第三方核价）；免费档不含 Cowork · 耗时：搭建为一次对话 + 手动跑一次批权限；每天起床即用</div><h2>一句话</h2>
+<p>HubSpot 首席 AI 技术专家 Tim Biondollo 每天早上要花约 2 小时查 Slack、回邮件、理待办票据、写站会草稿——他让 Claude Cowork 每晚定时跑一个“幕僚长简报”，起床时日历预习、邮件分级、今日任务、待处理 Slack 线程和站会草稿全已备好。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>把 HubSpot 提供的 Chief of Staff 提示词（外链 offers.hubspot.com）粘贴进 Claude Cowork。</li>
+<li>回答 intake 问题：你是做什么的、每天早上查什么、哪些事重要。</li>
+<li>手动跑一次，逐项批权限：可以只读，也可以允许互动；作者的设置是 Slack 只读指定频道，不开放全部频道。</li>
+<li>设为每日定时任务：日历预习 + 邮件分级 + 今日任务 + Slack 待处理线程 + 站会草稿，每天起床即备好；可选加一句“今日名言”。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自述，正在日常使用）：晨间例行约 2 小时（Slack、邮件、待办票据、站会草稿）→ 起床即备好的简报</li>
+<li>“2 小时”为晨间例行耗时口径的自述，无前后实测日志——成稿须写清这是自述口径，不是计时实测</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（完整提示词在 HubSpot 外链页，成稿只写骨架；原文步骤为三步：粘贴提示词 → 回答 intake 问题 → 手动跑一次批权限）</p>
+<p>```</p>
+<p>[每天早上替我做一份幕僚长简报]；</p>
+<p>[日历：今天的会 + 每个会的预习]；[邮件：按重要性分级 + 行动项]；[任务：今天到期/临近的任务 + 优先级]；[Slack：需要我回复的线程]；[站会：写一份我能直接发给经理的草稿]；</p>
+<p>[只读我指定的频道和邮箱范围；发消息、删东西、改设置之前先问我]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>这是“第一个智能体项目”的好起点：不用写代码，一次对话就能搭起来，第二天早上直接见效。国内读者照做时注意两点：① Claude Cowork 随 Claude 付费档（Pro $20/月起），免费档没有，先确认自己用的工具支持“定时任务 + 多智能体 + 自发现连接器”，简单聊天框做不了；② 权限务必最小化——作者自己就吃过亏：有一次没设好，AI 在不该说话的地方留了言，虽无害但得手动删。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：访谈体（主持人叙述 + Tim 直接引语，与第 23 批 DiCarlo 的 newsletter 访谈体同类口径）；“2 小时”为自述的晨间例行耗时，无前后实测日志</li>
+<li>成本口径：Cowork 本身无单独定价，随 Claude 付费档——Pro $20/月（年付约 $17/月）起，免费档不含；价格为 2026-10-22 第三方对照 claude.com/pricing 核价，成稿须提示以官网实时价为准；定时任务会消耗用量额度</li>
+<li>安全提醒：务必最小权限、只读优先；先手动跑一次逐项批权限再设定时；Slack 只开放指定频道，别全开</li>
+<li>适用边界：需要支持多智能体与自发现连接器的平台，简单聊天框做不了</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://marketingagainstthegrain.com/articles/the-overnight-automation-that-kills-busywork</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
