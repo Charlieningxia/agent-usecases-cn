@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一张照片加 10 秒语音，40 分钟让智能体生成一条 Reel（仅测试） · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">内容营销 · 评分 76 · 状态：仅测试（已发布成片，无播放/互动等外部效果数；成本为 credit 计数，未折算美元）</div><h1>一张照片加 10 秒语音，40 分钟让智能体生成一条 Reel（仅测试）</h1><div class="meta">作者/出处：Kien Nguyen<br>原文：<a href="https://videoaihub.substack.com/p/how-i-made-a-reel-without-filming" rel="nofollow noopener">https://videoaihub.substack.com/p/how-i-made-a-reel-without-filming</a><br>日期：2026-11-07 · 工具：Claude（桌面 App）、 Higgsfield Genjutsu for Reels（/shorts）、 Seedance 2.5<br>成本：约 1,030 credits（含全部返工）；1080p 镜头 16 credits/秒、480p 3 credits/秒；credit 兑美元价文中未给；Higgsfield MCP 新用户 3 天免费试用 · 耗时：首版约 40 分钟；读者照做约 1 小时（含返工）</div><h2>一句话</h2>
+<p>不用拍、不用剪：一张照片、一段 10 秒语音、一段 55 秒脚本、一支参考 Reel，在 Claude 里敲 /shorts，Higgsfield 的 Genjutsu for Reels 生成 11 个镜头、配字幕与音乐，首版约 40 分钟出来——作者把真实提示词全文贴了出来，也把翻车与返工的每一笔 credit 都记了账。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>准备四样东西：一张自己的照片、一段 10 秒语音（只用音色）、一段 55 秒脚本、一支想要的样子的参考 Reel；没有实拍素材。</li>
+<li>在 Higgsfield 官网连 MCP（Claude 的连接器页面会自动填好），新开一个 Claude 对话，敲 /shorts；把参考、脚本、照片、语音 clip 交给它。</li>
+<li>Claude 把脚本拆成 11 个镜头，先做了四个不同房间让作者挑一个，再用 Seedance 2.5 生成 11 条说话镜头（每条说自己的台词），约 7 分钟；随后转录每个镜头、按词对齐字幕、把人物从背景抠出来让标题落在脑后、用代码做标题与动效、加音乐与音效、渲染成片。</li>
+<li>首版约 40 分钟出来，作者不满意，逐条提修改意见（像对剪辑师说话，用大白话，带错别字也没关系）：头太大——Claude 把人往后移、逐帧跟踪缩小头部、重建身后的墙（不花 credit，在作者 Mac 上跑 Claude 写的脚本）；两个镜头鱼眼严重、墙都弯了——重拍，176 credits，提示词加一句“a normal lens with natural facial proportions, straight lines and no fisheye or barrel distortion”；AI 把“After Effects”说成“After Exams”——整条重拍 81 credits，作者的经验是词错了就重拍、不要打补丁；AI 总念错 Higgsfield——提示词里拼成“Higgs field”两个词并注明重音，先拿 18 credits 的 480p 小镜头试、再花 64 credits 出 1080p。</li>
+<li>成片前逐项检查：头是不是太大、墙是不是弯了、每个词发音对不对；先修镜头再做剪辑——因为只有镜头花真 credit，标题、字幕、时间轴与音效只是重新渲染，不花钱。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>11 条镜头、首版约 40 分钟；成片已发布（作者 Substack 附 Reel）</li>
+<li>成本明细（每笔都记了账）：首版 11 条镜头 677 credits + 房间/音乐/抠像 12 credits + 重拍 2 条鱼眼镜头 176 credits + 重拍 3 条念错词的镜头及抠像 164 credits，合计约 1,030 credits；1080p 镜头 16 credits/秒，480p 3 credits/秒；与布景互动的 4 条镜头用 480p 省钱</li>
+<li>无播放量、互动等外部效果数；credit 未折算美元；Higgsfield MCP 新用户有 3 天免费试用</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（原文真实提示词，略有节选；把作者本人与房间的部分换成自己的）</p>
+<p>```</p>
+<p>上传：@Image1（照片：只定主讲人的身份与着装，不定背景与姿势）@Image2（房间图：只定地点、空间、家具、材质与光线）@Audio1（语音：只定音色与口音，不复用原话、节奏与语气）。</p>
+<p>设置：5 秒、1080p、9:16。</p>
+<p>音频：只生成主讲人干净、近距离拾音的说话声；参考音频只用于音色；背景保持安静，无音乐、配乐、环境音、音效或其他声音。</p>
+<p>表达：英语，语速快、带点“告诉你一个秘密”的口吻，讲到“This is the photo I used”时咧嘴一笑；自然眨眼与呼吸，视线穿过镜头。</p>
+<p>肢体：说话时用手势；说到“film yourself”时一只手挥开；说到“This is the photo”时一只手向上向画框外指，眼睛跟过去；其余时间手放在胸前，整只手可见，绝不遮脸。</p>
+<p>镜头：中近景，画框从头顶上方的墙到胸部中间，头略低于画面中部；正面，镜头与眼睛平齐、一臂距离；标准镜头、自然面部比例、直线、无鱼眼或桶形畸变；机位锁定。</p>
+<p>主讲人说：[你的台词]</p>
+<p>```</p>
+<p>另附作者的纠音写法（照抄结构）：把品牌词按发音拼出来，如 &quot;Higgs field&quot;（两个词，重音在前半部分：HIGGS-feeld），再加一行注音说明。</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内创作者没有 Higgsfield MCP 也能套这个流程：核心是“一图 + 一音 + 一脚本 → 智能体拆镜头、逐条生成、按词对齐字幕”，工具换成自己能用的 AI 视频生成 + 剪辑组合；“先拿便宜档位试、再花高价出正片”是通用省钱法（480p 试错、1080p 出片）；“词错了重拍、不要打补丁”是作者用 81 credits 换来的经验。注意：用自己照片与声音做 AI 分身，发布时须按平台规则标注 AI 生成；不要用他人肖像与声音。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：状态为仅测试——成片已发布，但无播放量、点赞、涨粉等外部效果数；“40 分钟出片”是作者本人的首版耗时，不保证人人同速；成片里的浏览器实拍页面是“抓拍后用相机与光标移动”的效果，并非真实录屏，提示词画面也是打字示例，作者已在文中说明。</li>
+<li>成本口径：1,030 credits 是全文中最硬的数字，但 credit 兑美元价文中未给，不得换算成美元报价；Higgsfield MCP 3 天免费试用之后的价格原文未提，复现前须自行核对。</li>
+<li>赞助口径：全文多次链接 Higgsfield，未见赞助声明；按“是用户实测、非厂商通稿”处理，成稿已标注链接关系，读者自行判断。</li>
+<li>适用边界：AI 说话镜头仍有口型与表情的细微破绽（作者自己就修了三处）；长台词、快语速、多人对话场景的返工会更多；声音克隆涉及本人声音的使用，发布前确认平台标注规则。</li>
+<li>与已发布案例的边界：与第 19 批 Austin Claude 剪视频不同任务（彼为剪辑已有实拍素材，此为无实拍、从照片与语音生成整条 Reel）；与本批暂缓的 Kien Nguyen 远程剪辑机器人不同主题（彼为剪辑机器人，仍缺手工基线与档位价）。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://videoaihub.substack.com/p/how-i-made-a-reel-without-filming</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

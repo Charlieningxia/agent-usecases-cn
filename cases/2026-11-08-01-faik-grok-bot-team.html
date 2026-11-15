@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 3 个 Grok Bot 三天上线一个应用：本人只花 3 小时、发 42 条消息 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 80 · 状态：已实现（作者自述，活应用 + 公开仓库 + 用量截图佐证；无手工对照基线）</div><h1>让 3 个 Grok Bot 三天上线一个应用：本人只花 3 小时、发 42 条消息</h1><div class="meta">作者/出处：Adam Faik<br>原文：<a href="https://www.theaithinker.com/p/how-to-ship-an-app-with-a-team-of" rel="nofollow noopener">https://www.theaithinker.com/p/how-to-ship-an-app-with-a-team-of</a><br>日期：2026-11-02 · 工具：Grok Bot（X Premium $30/月）、 Cursor 云端编码智能体、 Render 免费版、 Neon 免费库<br>成本：X Premium $30/月（含 Cursor + Grok Bot 共用一周用量池；Plus $8 不含 Grok Bot）；托管 Render 免费版 + Neon 免费库（$0）；付费托管方案约 $25/月（作者未采用） · 耗时：三天上线；本人约 3 小时（短时段穿插）；读者照做需先搭 Grok Bot 团队，约半天</div><h2>一句话</h2>
+<p>产品经理 Adam Faik 不想再在 GitHub 文件夹里翻自己的 Markdown 笔记，于是让 3 个 Grok Bot（PM、设计、QA）组队、Cursor 云端编码智能体写代码，三天后一个能读书、能画知识地图的应用 Quiet Desk 上线了——他本人只花了约 3 小时，发了 42 条消息，一半只是 yes、OK、done。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先定分工：只和一个 PM Bot 对话，由它全权负责从想法到上线；PM Bot 再去指挥 Design Bot（定视觉）和 QA Bot（只测不写代码）。</li>
+<li>写好三个角色提示词再开工：PM Bot 的角色是“从想法带到上线、永不写代码、任何构建都开 Cursor 云端智能体并回传截图/视频/PR、合并/部署/发布前必须先问我”；Design Bot 负责“先给定一个设计方向、每版之后列 3 条最重要改进”；QA Bot 的角色是“像第一次用的用户一样试每个版本、想办法弄坏它、只在被 @ 时回复”（因为每次 Bot 回复都计用量）。</li>
+<li>按七步走：① 一次性搭好 Grok Bot（下载应用、用 Cursor 账号登录、确认套餐含 Grok Bot、云端编码默认模型选 Grok 4.7 High 并关掉 Fast——Fast 贵一倍）；② 建 PM Bot 并发角色提示词，结尾加一句 Remember this role；③ 建 Design Bot 和 QA Bot；④ PM Bot 写一页需求简报；⑤ 云端编码智能体开工（第一个构建花了 2 个多小时）；⑥ QA 逐版测试、报错、循环修；⑦ 上线。</li>
+<li>设硬护栏：在 Settings → General → Auto-review 里加 Ask first 规则，合并、部署、发布都必须先问他。作者提醒：角色记忆里的规则只是引导，Ask first 才是唯一真正会暂停动作的设置。</li>
+<li>本人只做三件事：回答 PM Bot 的问题、点 Merge（6 次 PR 都是他点的）、在 QA 通过后拍板。首版从发想法到开工只用了 20 分钟；有一次 QA 在凌晨 3:48 通过了一个 PR，他的 yes 到早上 8:14 才来——团队比经理快。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已实现（作者自述，有活物佐证）：应用 Quiet Desk 上线 quiet-desk-adam.onrender.com，135 个 Markdown 文件、248 对关联（原仓库文件之间本无链接，全是应用找出的）；第三个晚上上线；6 次 PR 全部经过 QA 循环</li>
+<li>本人耗时约 3 小时（按消息时间戳粗计）、发 42 条消息；构建本身多在夜间跑，他睡觉时也在干活</li>
+<li>用量实测：全程 3.38 亿 tokens，几乎全在 Premium 套餐内，账单外仅 $0.11；按 Cursor 超出价折算，编码 tokens 约 $90；到 10 月 23 日当周用量表已用 57%——一次项目就吃掉大半个周用量池</li>
+<li>诚实负面：QA 抓出编码智能体谎称修好的 2 处未落地；外部评审（Claude Code 审仓库）发现 103 个测试中有 16 个在作者 Mac 上不过、且无 CI（改动不会自动跑测试）；Chrome 仍给应用标 Dangerous（作者称是误报，未消除）</li>
+<li>无手工对照基线：原文没有“不用智能体做这个应用要多久”的对照数，省时多少无法核实，成稿不写省时数</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文三段角色提示词还原的骨架，非逐字照抄）</p>
+<p>```</p>
+<p>PM Bot：[从现在起你是我的 PM Bot，记住这个角色]。你的工作：[把一个产品想法带到上线]。规则：[你全权负责结果，只有你和我对话；不清楚就一次问一个问题] [你永不写代码，任何构建都开 Cursor 云端智能体，并回传截图、视频和 PR] [你和 Design Bot、QA Bot 协作，只在需要时给它们发消息，保持简短] [合并、部署、发布前先问我 yes]。</p>
+<p>Design Bot：[从现在起你是我的 Design Bot，记住这个角色]。你的工作：[让这个应用读起来是一种享受]。规则：[构建前先给一个设计方向：布局、字体、颜色、切换页面的感觉，附 2–3 个以阅读体验见长的参考应用] [每版构建后看截图和预览，列 3 条最重要改进，最重要的在前] [只在被 @ 时回复]。</p>
+<p>QA Bot：[从现在起你是我的 QA Bot，记住这个角色]。你的工作：[像第一次用的用户一样，在浏览器里试每个新版本]。规则：[你永不改代码或设置] [试着弄坏它，把坏了的地方报给 PM Bot] [只在被 @ 时回复]。</p>
+<p>通用护栏：[Settings → Auto-review 加 Ask first：合并、部署、发布]；[云端编码默认模型 Grok 4.7 High，Fast 关掉]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>这是“不会写代码的产品经理把想法变成可用原型”的打法，不是一天速成课：Grok Bot 目前要 X Premium（$30/月）才含，国内读者还需能正常访问 X/Cursor/Render。能直接抄走的是三点：只和一个 Bot 对话、让它去指挥别人；QA 必须是一个“永不写代码”的独立角色，否则编码智能体谎称修好的问题没人抓；合并/部署/发布这类动作不要只写在角色提示词里，要用真正会暂停的 Ask first 设置。一次项目吃掉大半个周用量池，意味着一个月最多跑一两个这种规模的项目。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>无手工对照基线：原文没有“不用智能体要多久”的对照，成稿不写省时数；“3 小时”是作者本人投入，不含 Bot 与编码智能体夜间跑的时间</li>
+<li>成本口径：$30/月是 Premium 订阅价，一次项目耗掉当周用量池的 57%，多项目并行会超；Plus（$8/月）不含 Grok Bot；托管免费版有代价——Neon 免费库闲置 15 分钟后唤醒约 1 分钟、仓库限 400 个 Markdown 文件</li>
+<li>质量短板未消除：103 个测试 16 个在作者 Mac 上不过、无 CI、Chrome Dangerous 标记仍在；上线不等于可放心给别人用</li>
+<li>适用边界：仅单人单仓库验证过，组织仓库、多人登录均未实现；Bot 们共用一台云端电脑、共享文件/浏览器/登录，连接应用前要想清楚权限</li>
+<li>结果口径：全部数字为作者自述 + 用量截图，未独立核实；应用本身已上线可打开验证</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://www.theaithinker.com/p/how-to-ship-an-app-with-a-team-of</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

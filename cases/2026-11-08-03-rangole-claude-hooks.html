@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让两段 hook 把 Claude Code 重任务成本砍掉 1/3 到 1/2 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 79 · 状态：已节省（作者自测，前后对照 headless 会话；单次运行、仅重任务口径）</div><h1>让两段 hook 把 Claude Code 重任务成本砍掉 1/3 到 1/2</h1><div class="meta">作者/出处：Bhagyesh Rangole<br>原文：<a href="https://medium.com/@bhagyeshrangole.jb/how-i-made-claude-code-cheaper-without-changing-how-i-work-9275d9ac59bc" rel="nofollow noopener">https://medium.com/@bhagyeshrangole.jb/how-i-made-claude-code-cheaper-without-changing-how-i-work-9275d9ac59bc</a><br>日期：2026-11-08 · 工具：Claude Code、 两段 shell hook（PreToolUse）、 jq<br>成本：额外 $0（已有 Claude 订阅前提下；订阅价原文未提，成稿不写 $0 总成本）；一次安装，当天生效 · 耗时：安装一次约 10 分钟（跑一个 install.sh）；读者照做当天可测出自己 setup 的前后对照</div><h2>一句话</h2>
+<p>Claude Code 的钱大头花在“读”上，而且读的活常由最贵的模型干：作者 Bhagyesh Rangole 写了两段小 hook——大文件只许读 200 行切片、helper 默认走 Sonnet 而不是 Opus——重任务（跨库搜索、读大文件）的成本降了 1/3 到 1/2，答案不变。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先定位钱花在哪：编码智能体的大头开销是阅读——Claude Code 会为一个小问题读完整 4,000 行文件；跨库搜索时常起一个 helper（内置 Explore），在订阅制下 helper 默认跑在 Opus（最贵模型）上。一次调查里，两个搜代码的 helper 各烧了约 20 万 Opus tokens，只是为了找东西。</li>
+<li>第一段 hook（PreToolUse，拦 Read）：文件超过 500 行时，主模型一次最多读 200 行；整读或大范围读直接拦下，提示它先 grep 再读切片，或把文件交给便宜的 helper 去读后汇报。注意不能全拦——Claude Code 改文件前必须先读过它，小切片能保住编辑能力。</li>
+<li>第二段 hook（PreToolUse，拦 Agent）：Claude 起内置 helper 时如果没指定模型，hook 帮它填 Sonnet；如果它自己选了模型，或是自定义 agent，就不动。再在 <code>~/.claude/CLAUDE.md</code> 里加一行模型分工备注：Haiku 查、Sonnet 探、Opus 只做设计与硬 debug。</li>
+<li>测法：同一个问题开全新 headless 会话（<code>claude -p --output-format json</code>），开 hook 与关 hook 各跑一次，对比 Claude Code 自己报告的会话成本。</li>
+<li>诚实记录“没用的那一半”：第一段 hook 其实很少触发——针对具体问题时 Claude 本来就会先 grep、只读三小片；只有“解释这个 3,400 行模块是干嘛的”这类宽泛问题才会整读。真正省钱的是第二段 hook（helper 降模型）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>已节省（作者自测，仅测试口径）：重任务（跨代码库搜索、读大文件）成本降 1/3–1/2，答案不变；小而聚焦的问题无变化——Claude 本来就答得便宜，没东西可省</li>
+<li>关键数字均可核：两段 hook 全文附在原文 install.sh 里，一键安装并备份 settings.json；需 jq；跑完重开一个 Claude Code 会话即生效（hook 只在会话启动时加载）</li>
+<li>局限作者自己写明了三处：① 单次运行，不是均值；② 前三次“开 hook 后”的轮次有提示缓存预热加成，大文件轮次因交替顺序最干净；③ 订阅制下省的是用量额度进度，不是账单金额——“降 1/3–1/2”不等于账单少付 1/3–1/2</li>
+<li>诚实负面：原想主推的“拦大文件读取”基本不触发；shell 读文件（cat/sed）不在 hook 覆盖内，仍可绕过</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（本条的可复用物是两段 hook 的逻辑骨架，非原文逐字脚本；完整 install.sh 见原文）</p>
+<p>```</p>
+<p>Hook 1 — block-big-reads（PreToolUse → Read）：</p>
+<p>[文件 &gt;500 行时，主模型一次最多读 200 行]；[整读或大范围读 → 拦下并提示：先 Grep 定位，再 Read（offset + limit ≤200）；或派 Agent（Explore，model=haiku）读完整文件后只汇报答案]；[放行：Explore 子智能体读整文件、图片/PDF/notebook、≤500 行文件]；[每次拦截记一行日志到 ~/.claude/hooks/big-reads.log]。</p>
+<p>Hook 2 — default-subagent-model（PreToolUse → Agent）：</p>
+<p>[起内置 helper 且未指定模型 → 填 Sonnet]；[已指定模型或自定义 agent → 不动]；[每次改写记一行日志]。</p>
+<p>CLAUDE.md 备注：[haiku：查东西、简单搜索] [sonnet：探索、读代码讲明白] [opus：设计决策、硬 debug、审改动]；[hook 只保底不强制——它保证 helper 不默认跑 Opus，不强制指定 Haiku]。</p>
+<p>自测方法：[同一问题，全新 headless 会话，关 hook 跑一次、开 hook 跑一次，对比 Claude Code 报告的会话成本]；[交替顺序跑大文件轮次，避免缓存预热偏袒后跑的一方]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>这是给 Claude Code 重度用户的“当天生效”小手术：跑一次 install.sh，全项目生效，额外 $0。国内读者用同类编码智能体时思路一样：先看用量报告里钱到底花在哪（读文件？helper？），再决定拦什么。照搬前先注意两点：① 订阅制下省的是用量额度，不是账单——如果你本来就用不完额度，这招省不到钱；② 作者的 1/3–1/2 只针对重任务，小问题本来就便宜，别指望整体账单同比例下降。先拿自己的 setup 跑一遍前后对照再下结论，方法原文已给。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：单次运行、非均值；百分比仅针对重任务（跨库搜索、读大文件），不是整体用量；前三次 after 轮次有缓存预热加成，作者已明示</li>
+<li>成本口径：额外 $0 的前提是已有 Claude 订阅；订阅价原文未提，成稿不写总成本 $0</li>
+<li>覆盖缺口：shell 命令读文件（cat/sed）可绕过 Read hook；模型分工备注只是建议，hook 只保证 helper 不默认跑 Opus，不强制 Haiku</li>
+<li>适用边界：只对 Claude Code 的 PreToolUse hook 机制有效；换工具要重写；重任务占比低的用户几乎省不到东西</li>
+<li>安全提醒：install.sh 会改 <code>~/.claude/settings.json</code>（先备份为 .bak-token-saver），跑之前确认备份已生成；hook 只在新会话启动时加载</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@bhagyeshrangole.jb/how-i-made-claude-code-cheaper-without-changing-how-i-work-9275d9ac59bc</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
