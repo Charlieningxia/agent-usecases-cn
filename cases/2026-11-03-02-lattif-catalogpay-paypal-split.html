@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体把杂乱订单变成 PayPal 分账收款：人工 45 分钟变几秒（仅演示，未验证） · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">销售客服 · 评分 74 · 状态：仅测试未验证（Hackathon 演示项目；无真实商户订单数与真实到账金额；45 分钟为作者估计非实测）</div><h1>让智能体把杂乱订单变成 PayPal 分账收款：人工 45 分钟变几秒（仅演示，未验证）</h1><div class="meta">作者/出处：Muaaz Lattif<br>原文：<a href="https://medium.com/@muaazlattif/i-built-an-ai-agent-that-turns-messy-orders-into-paid-paypal-checkouts-df22facece71" rel="nofollow noopener">https://medium.com/@muaazlattif/i-built-an-ai-agent-that-turns-messy-orders-into-paid-paypal-checkouts-df22facece71</a><br>日期：2026-10-25 · 工具：Gemini 2.5 Flash、 PayPal、 CatalogPay Agent（开源演示）<br>成本：演示 $0、无需 API key 即可试用；生产环境的 Gemini 调用费与 PayPal 手续费原文未给，上线前须自行核算 · 耗时：跑演示约 10 分钟；按自己商品目录搭一版约半天</div><h2>一句话</h2>
+<p>多卖家市场里最磨人的活不是卖货，是把微信式杂乱订单（文字、手写照片、语音）翻成“谁卖了什么、该分多少钱、一次性收上来再分下去”——作者的演示智能体把这一步做成：AI 只读单、不定价，目录价算出总额后 PayPal 收一笔、自动按份额分账给各卖家。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>读单：Gemini 2.5 Flash 读杂乱消息、照片或语音，抽出每件商品与数量。</li>
+<li>定价权不在 AI：价格一律来自商品目录，AI 只匹配、不定价；“espreso tampr”这类错别字仍能匹配，“half kg”自动换算成 500 g 包装。</li>
+<li>难单先拦下：缺货、无意义的行直接标出且不收费；一行可能对应两个商品时，人先在表里点选正确的，价格即时更新。</li>
+<li>收款与分账：PayPal 向买家收一笔；付款核对无误后，每个卖家自动收到自己份额的 PayPal 付款。</li>
+<li>钱的安全规则：金额全部按整分存储，防四舍五入丢钱；每个 PayPal 请求带唯一幂等键，双击也不会重复扣款；600 多个测试覆盖重试、超时与 webhook。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>作者估计：人工处理一单约 45 分钟，智能体做到“几秒”（作者估计，非实测基线；仅测试状态）</li>
+<li>600 多个测试覆盖重试、超时、webhook（已实现，演示项目的测试数）</li>
+<li>无真实商户订单数、无真实到账金额：这是 Hackathon 演示项目，不是已跑起来的生意；成稿时必须标注“仅测试未验证”，不能写成“已帮商户收款”</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的规则骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>读单：[消息/照片/语音] → 抽出 [商品 + 数量]，不确定的行先标出不收费。</p>
+<p>定价：价格只来自 [商品目录]，AI 绝不定价；模糊匹配给 [置信度]，低置信度走人工点选。</p>
+<p>算账：金额按 [整分] 存；每笔请求带 [唯一幂等键]，防重复扣款。</p>
+<p>收款：[PayPal 收一笔] → [核对到账] → [按目录份额自动分账给各卖家]。</p>
+<p>兜底：[缺货/无意义行不收费] + [重试/超时/webhook 全进测试]，钱的问题先问“失败了还能不能对上账”。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内多卖家拼单、社区团购、代购合单都有同样的“杂乱订单→分账”痛点，但支付与分账链路不能照搬：PayPal 分账要换成微信支付 / 支付宝 / 银行的分账产品，且分账涉及持牌与税务问题，上线前必须先问清平台规则与合规要求。先拿演示站跑通“读单→匹配→算账”这一步，再谈真实收款。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>仅测试未验证：Hackathon 演示，无真实商户、无真实到账；45 分钟是作者估计，没有人工基线实测，不能写成“每单省 45 分钟”。</li>
+<li>钱的安全不能只看演示：幂等键、整分存储、webhook 重试是正确方向，但真实环境还有退款、部分退款、卖家掉线、汇率与手续费分摊等原文没覆盖的情况。</li>
+<li>生产成本未给：Gemini 调用费与 PayPal 手续费原文未给；演示 $0 不等于上线 $0。</li>
+<li>合规注意：代收代付与分账在不同地区规则不同，涉及资金归集时务必先咨询平台与专业意见，不要直接拿演示代码收真实款项。</li>
+<li>与已发布案例的边界：与已发布账单、收款类案例不同——本篇的核心不是“谈下账单”，而是“杂乱订单→目录定价→一笔收款→多卖家分账”的整条链路，且明确标注仅演示。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@muaazlattif/i-built-an-ai-agent-that-turns-messy-orders-into-paid-paypal-checkouts-df22facece71</p>
+<p>演示：https://catalogpay-agent.onrender.com/</p>
+<p>代码：https://github.com/muaazl/catalogpay-agent</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体自纠修 bug：3.5 小时周期降到 38 分钟，每 PR 花 $0.31 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 73 · 状态：已节省（作者自述，未独立核实；30 天、120 票、两个工程团队的生产数据）</div><h1>让智能体自纠修 bug：3.5 小时周期降到 38 分钟，每 PR 花 $0.31</h1><div class="meta">作者/出处：Sumit Singh<br>原文：<a href="https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301" rel="nofollow noopener">https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301</a><br>日期：2026-11-01 · 工具：Claude Code CLI、 Python 封装脚本 agent_runner.py（全文贴出）、 pytest、 AST 校验<br>成本：每 PR 平均 $0.31（API token 成本）；Claude 订阅档位价原文未给，复现前须自行核对，订阅价若超 $50/月须显眼标注 · 耗时：脚本复制级搭建，开发者一天内可上手；作者团队用了 4 个月从被动补全迁移到自主流水线（含一次凌晨事故与重构）</div><h2>一句话</h2>
+<p>别再让智能体裸奔写代码：作者给 Claude Code CLI 加了一层 Python 护栏脚本——禁写路径、45 秒超时、pytest 校验、最多 3 次重试、失败回滚，修 bug 与脚手架周期从 3.5 小时降到 38 分钟。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先踩坑：v1.0 只给测试 runner 设了 5 秒超时，一个重型数据库迁移 fixture 触发超时后，智能体误判代码已坏，重写了 600 行迁移文件，凌晨 2 点 CPU 占满、内存耗尽，团队花 4 小时排错；教训是两行改动——禁写路径 + 超时从 5 秒提到 45 秒加指数退避。</li>
+<li>扔掉重型框架：先用 CrewAI，两周写了 800 行智能体定义、$45 API 账单还没解决一张 Jira 票；换成 150 行确定性 Python 状态机（无魔法提示词链、无复杂层级），作者称快 4 倍、token 少 65%。</li>
+<li>搭自纠环：agent_runner.py 封装 Claude Code CLI——禁写 <code>.env</code>、migrations、secrets 等路径；跑 pytest 校验；失败把报错喂回智能体再改，最多 3 次；3 次不过 git 回滚；全程在 git worktree 隔离分支跑，不动 main。</li>
+<li>30 天生产实测：120 张工单、两个工程团队，逐项计时对照；同时记下四个生产坑：上下文退化（一次读 25 个文件推理质量下降）、无限重构循环（须给确定性停止条件）、不稳定测试幻觉（测试必须 100% 确定、mock 掉网络）、分支隔离。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>修 bug 与功能脚手架平均周期：3.5 小时 → 38 分钟（作者自述，30 天生产数据）</li>
+<li>新端点脚手架：45 分钟 → 8 分钟；单元测试生成：30 分钟 → 4 分钟；不稳定测试排错：60 分钟 → 14 分钟</li>
+<li>每 PR 平均 $0.31 API token 成本（传统补全模式为 $0.04/PR）；作者的算法是：$0.31 换 45 分钟高级工程师时间</li>
+<li>失败经过亦如实写出：5 秒超时误判导致 600 行迁移文件被重写、4 小时排错</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的任务骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>任务：[一张 Jira 票：修 bug 或搭功能脚手架]，交给终端里的 Claude Code CLI。</p>
+<p>护栏（先于任务生效）：禁写 [<code>.env</code> / migrations / secrets / 生产配置]；测试超时 [45 秒 + 指数退避]；最多重试 [3 次]；失败 [git 回滚]；隔离分支 [git worktree]。</p>
+<p>自纠环：[生成 diff] → [跑 pytest / linter] → [通过则提交 PR；失败则把报错原文喂回智能体再改]。</p>
+<p>停止条件：[测试全过] 或 [git diff 归零] 或 [3 次重试耗尽]，绝不无限循环。</p>
+<p>复用：把 agent_runner.py 当模板，只改[禁写路径]与[测试命令]就能套到自己的仓库。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>先在非 main 的 worktree 分支上试一张低风险票；把禁写路径换成自己项目的敏感目录（配置、密钥、迁移）；测试命令按自己的栈改（pytest/vitest/Go test）；Claude 订阅与 API 计费按自己的账单算，$0.31/PR 只是作者的 API 成本口径。注意：原文示例脚本里有 <code>--dangerously-skip-permissions</code>，正是靠外层 Python 护栏兜底才敢用——不要只抄这一行而不抄护栏。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：全部数字均为作者自述，无第三方审计；“80%”是标题说法，成稿标题已改用已核实的“3.5 小时→38 分钟”。</li>
+<li>成本口径：$0.31/PR 只是 API token 成本，Claude 订阅档位价原文未给；订阅价若超 $50/月须显眼标注。</li>
+<li>场景边界：这是两个工程团队的生产流水线，不是纯个人场景；个人复现时先从小范围、低风险任务起步。</li>
+<li>安全注意：示例脚本使用 <code>--dangerously-skip-permissions</code>，必须配合禁写路径、worktree 隔离与失败回滚一起用；不要在 main 分支或共享分支上直接跑自主智能体。</li>
+<li>与已发布案例的边界：与已发布 2026-10-18-07 Issue 转 PR、2026-10-20-02 代码评审主题相近但方法不同（本篇是 Hooks 自纠环 + 护栏脚本 + 120 票实测）。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@ssilu07/how-i-replaced-80-of-my-daily-coding-workflow-with-claude-code-cli-and-custom-hooks-9b578475d301</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

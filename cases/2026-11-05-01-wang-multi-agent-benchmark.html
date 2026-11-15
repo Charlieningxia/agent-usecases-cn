@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体组队解 GitHub Issue：48 个全新 Issue 解出 60%，每题不到 1 毛钱 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 83 · 状态：仅测试已验证（基准实测，非个人省钱/省时；作者自承 48 题样本下小队与单智能体的差距在噪声范围内）</div><h1>让智能体组队解 GitHub Issue：48 个全新 Issue 解出 60%，每题不到 1 毛钱</h1><div class="meta">作者/出处：Kenneth B.C. Wang<br>原文：<a href="https://medium.com/@bichengwang17/coding-agent-teams-barely-beat-one-agent-on-48-fresh-github-issues-181d76eee1c0" rel="nofollow noopener">https://medium.com/@bichengwang17/coding-agent-teams-barely-beat-one-agent-on-48-fresh-github-issues-181d76eee1c0</a><br>日期：2026-11-02 · 工具：自研开源 runner multi-agents、 Claude Code（Haiku 5.5）、 SWE-bench-Live MultiLang 数据集<br>成本：全量 144 次运行模型用量 $15.67；单题 $0.061–$0.17；Claude Code 订阅/API 档位价原文未给，复现前须自行核对 · 耗时：单题约 1–4 分钟；读者照做一条命令即可跑通小样本，一天内可上手</div><h2>一句话</h2>
+<p>多智能体组队写代码到底比单智能体强多少？作者拿 48 个模型训练截止期之后才新建的真实 GitHub Issue 实测：带评审员的小队解出 60%，只比单智能体多解 2 题——组队有用，但别神化。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>搭一个开源小队运行器 multi-agents：四种形态——solo（单智能体基线）、review（coder + reviewer，评审员在独立仓库副本里审补丁，最多来回 3 轮）、best of 3（三个 coder 并行，judge 挑最好补丁）、plan（planner 拆任务、worker 并行、integrator 合并）。</li>
+<li>建一个防作弊基准：只取 2026-07-01 之后新建的 Issue（在模型训练截止期之后，没背过答案），来自 SWE-bench-Live MultiLang，覆盖 Java、C#、C、Rust、JavaScript、C++，项目包括 DuckDB、Apache Parquet、LangChain4j、OrchardCore 等；每个 Issue 在剥离 git 历史的全新云沙箱里跑，再用项目隐藏测试在干净沙箱里评分，智能体看不到测试。</li>
+<li>三种小队各跑全部 48 题：全部用 Claude Code + Haiku 5.5（Anthropic 当前 lineup 里的小模型），每题计时、计费；全部补丁、日志、评分公开在 GitHub 仓库 BichengWang/multi-agents 与结果页。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>review 小队：29/48 解出（60%），$0.098/题，中位 3.3 分钟（基准实测，公开仓库+隐藏测试评分可核）</li>
+<li>best of 3：28/48（58%），$0.17/题，中位 4.4 分钟</li>
+<li>solo 单智能体：27/48（56%），$0.061/题，中位 77 秒</li>
+<li>144 次运行合计 $15.67；review 比 solo 多解 2 题、0 题丢失，best of 3 多解 2 题、丢 1 题；作者自承 48 题样本下差距在噪声范围内，下一轮将扩大题量</li>
+<li>评审员首轮就放行了 39/48 个补丁——作者的结论是：评审员必须先过项目测试才算真过滤，judge 需要平局打破机制，下一步测前沿模型当评审员</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的任务骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>目标：[在一批模型没见过的新 Issue 上，比较几种智能体小队形态]，不要拿旧基准自嗨。</p>
+<p>任务筛选：[公开数据集] → [只留训练截止期之后新建的 Issue] → [参考修复能在沙箱里通过]。</p>
+<p>小队形态：[solo 基线] / [coder + reviewer，最多 3 轮] / [3 个 coder 并行 + judge 选优] / [planner 拆分 + worker 并行 + integrator 合并]。</p>
+<p>评分：[全新沙箱跑补丁] + [隐藏测试在干净沙箱评分] + [智能体看不到测试]；每题记[解出与否/耗时/费用]。</p>
+<p>复现命令：git clone https://github.com/BichengWang/multi-agents &amp;&amp; uv sync --extra bench &amp;&amp; python -m agent.bench tasks --since 2026-07-01 --limit 5 --seed 7</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>不用照搬 48 题全量：先用 <code>--limit 5</code> 跑 5 题小样本，验证自己的仓库与模型组合；把 Issue 来源换成自己团队的真实 backlog，同样用“训练截止期之后新建 + 隐藏测试评分”防作弊；国内模型接入与 API 计费方式不同，成本按自己的账单算，不要照抄 $0.098/题。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：这是基准实测，不是个人省钱/省时案例；“小队只多解 2 题”且作者自承在噪声范围内，不要解读成“组队必胜”。</li>
+<li>成本口径：$15.67 只是模型用量；Claude Code 订阅/API 档位价原文未给，订阅价若超 $50/月须显眼标注。</li>
+<li>披露：作者声明文章由 AI 写作助手协助起草，但结果均来自公开结果页与数据文件；原文末尾注明“不含雇主工作”。</li>
+<li>适用边界：Haiku 5.5 是小模型；前沿模型当 coder/reviewer 的结果尚未测出，不能外推。</li>
+<li>与已发布案例的边界：与已发布 2026-10-19-02 智能体算术评测不同任务（彼为算术评测，此为真实 Issue 解题基准）；与已发布 2026-10-20-02 代码评审不同方法（彼为评审流水线，此为小队形态对照实验）。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@bichengwang17/coding-agent-teams-barely-beat-one-agent-on-48-fresh-github-issues-181d76eee1c0</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

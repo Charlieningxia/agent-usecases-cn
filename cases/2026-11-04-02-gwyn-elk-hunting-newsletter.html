@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体替你出差：14 天打猎，newsletter 14/14 期准时发出 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">内容营销 · 评分 78 · 状态：已实现（作者自述的连续交付记录，未独立审计；未给出省时小时数）</div><h1>让智能体替你出差：14 天打猎，newsletter 14/14 期准时发出</h1><div class="meta">作者/出处：Will Gwyn<br>原文：<a href="https://medium.com/@wrg32786/i-went-elk-hunting-for-14-days-and-my-newsletter-didnt-miss-a-day-6c68cea4f8ea" rel="nofollow noopener">https://medium.com/@wrg32786/i-went-elk-hunting-for-14-days-and-my-newsletter-didnt-miss-a-day-6c68cea4f8ea</a><br>日期：2026-10-29 · 工具：Claude Code、 Claude Code remote control（手机远程接入）、 aigent-os（作者自研开源，context capsule + git-backed 记忆）、 Starlink Mini（太阳能供电）<br>成本：Claude Code 订阅档位价原文未给；Starlink Mini 硬件价原文未给，复现前须自行核对，订阅价若超 $50/月须显眼标注 · 耗时：搭一套“分工 + 记忆胶囊 + 手机遥控”约半天到一天（已有长期运行基础者更快）；出差期间每天手机 check-in 约 10–20 分钟</div><h2>一句话</h2>
+<p>出门打猎 14 天、山里没有手机信号，作者的日更 newsletter 一期没缺：4 个分工的 Claude Code 智能体在家里的电脑上接着干活，他每天晚上只在帐篷里用手机 check-in 10–20 分钟。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>先分工，不搞一个全能智能体：Titus 当总管（盯全局与其他智能体）、Pheme 跑 newsletter、Davinci 负责搭建与修东西、Metis 管派活与杂务；四者共同触达 newsletter、课程、自动头像口播视频引擎、广告 deal、Meta 广告与邮件漏斗。</li>
+<li>用记忆胶囊解决“会话越长越变笨”：作者自研的开源 aigent-os 让每个智能体把上下文存成 context capsule，跑 /clear 清空后从胶囊加 git-backed 长期记忆恢复，而不是让一个会话硬扛两周的上下文。</li>
+<li>手机只当遥控器，不当工作台：通过 Claude Code remote control 在手机 Claude App 里打开家里电脑上的同一个会话、同一批文件；作者强调“不是在手机上干活，而是从手机上指挥干活”。</li>
+<li>每天固定 check-in：打猎回来晚上进帐篷，看 Pheme 当天排好的稿子、问 Titus 期间发生了什么、回答智能体攒下的问题；通常 10–20 分钟。</li>
+<li>留一个人工兜底口子：有天晚上 newsletter 草稿卡住了，作者记不清原因，问智能体后由智能体自行排查修复，当期仍准时发出；作者坦言唯一无法远程处理的是电脑本身出问题（关机、断电、断网）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>14 天外出期间日报 14/14 期准时发出，业务正常运转（已实现，作者自述的连续交付记录，未独立审计）</li>
+<li>每天手机 check-in 约 10–20 分钟（作者自述）</li>
+<li>一次草稿卡住由智能体自行排查修复，当期仍准时发出（已实现，作者自述）</li>
+<li>未给出数字：作者没有给出“比自己坐班省了多少小时”，也不能把 14 期直接换算成省时数；这是本篇主要的口径缺口，成稿时如实标注</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的运转骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>分工先行：[总管] + [内容执行] + [搭建/修复] + [派活杂务]，查问题时先找对口的智能体。</p>
+<p>记忆规则：[每个智能体存 context capsule] → [/clear] → [从胶囊 + git-backed 记忆恢复]，不让单会话硬扛长期上下文。</p>
+<p>遥控规则：[家里电脑保持开机联网] + [手机只打开同一会话指挥]，不把活搬到手机上做。</p>
+<p>每日 check-in 清单：[看当天排好的稿子] + [问总管期间发生了什么] + [回答智能体攒下的问题]。</p>
+<p>兜底口子：[草稿卡住先问智能体自查修复]；[电脑本身断电断网只能人工到场]，出发前先确认这条。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>没有 Starlink、没有 aigent-os 也能搬这个循环：用一台家里常开的电脑跑分工智能体，手机远程接入同一会话指挥；关键是先把“记忆胶囊”（定期总结 + 清空重载）和“分工”搭好，否则长会话先变笨、后失控；国内网络与模型接入方式不同，远程接入的稳定性和成本按自己的方案算。出发前务必先做一次“断电断网演练”——确认家里有人能帮你按开机键。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>成本口径：Claude Code 订阅档位价与 Starlink Mini 硬件价原文均未给，复现总成本未知；订阅价若超 $50/月须显眼标注。</li>
+<li>结果口径：14/14 期是交付记录不是省时数；作者自述未经独立审计；newsletter 已有 9,000+ 订阅者与长期运行基础，新号从零照搬不能默认同样稳定。</li>
+<li>单点故障：家里电脑必须保持开机联网，断电、断网、睡眠都只能人工到场处理；这是本篇作者自己点明的唯一硬性前提，出差前必须有兜底人。</li>
+<li>与已发布案例的边界：与已发布晨报/周报智能体不同——那几篇讲的是“定时产出内容”，本篇讲的是“长期分工智能体 + 记忆胶囊 + 手机遥控，让业务在主人离线两周时照常运转”；与已发布“智能体替你巡店”不同——彼为单智能体定时巡查，此为四智能体分工协作。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@wrg32786/i-went-elk-hunting-for-14-days-and-my-newsletter-didnt-miss-a-day-6c68cea4f8ea</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

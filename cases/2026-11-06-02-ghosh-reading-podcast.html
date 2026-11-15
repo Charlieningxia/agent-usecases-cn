@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>每天 2 小时阅读压成 30 分钟播客：Claude 摘要 + 自建语音应用 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省时间行政 · 评分 77 · 状态：已节省（作者自述）</div><h1>每天 2 小时阅读压成 30 分钟播客：Claude 摘要 + 自建语音应用</h1><div class="meta">作者/出处：Dibakar Ghosh<br>原文：<a href="https://www.howtogeek.com/claude-saves-me-hundreds-of-dollars-and-hours-of-work/" rel="nofollow noopener">https://www.howtogeek.com/claude-saves-me-hundreds-of-dollars-and-hours-of-work/</a><br>日期：2026-11-03 · 工具：Claude Pro（$20/月）、 自建 Kokoro TTS 网页应用、 Firecrawl connector（部分网站读不到时）<br>成本：Claude Pro $20/月；3 个订阅平替应用用同一订阅在数周内陆续建成，无额外订阅支出 · 耗时：播客管线当天可搭；3 个平替应用为数周内若干次会话陆续建成，非单日成果</div><h2>一句话</h2>
+<p>记者每天要读 2 小时以上的文章：他把链接丢给 Claude 做个性化摘要，再送进自建语音应用，变成 30 分钟播客来听——自述每周省 10 小时以上；顺带用同一个 Claude 订阅重建了 3 个付费应用的平替。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>每天把想读的文章链接丢给 Claude（新闻与非虚构为主，作者每天阅读量超过 2 小时）。</li>
+<li>Claude 先读全文、再生成摘要；因为 Claude 已有作者的项目与兴趣上下文，摘要会过滤噪音、只留真正相关的部分。</li>
+<li>Claude 把摘要发给作者自建的文字转语音网页应用（Kokoro 驱动），生成 30 分钟播客；作者通勤或做别的事时听完。</li>
+<li>设一道护栏：Claude 被明确要求标记写得特别好的文章，推荐作者读原文全文，而不是只听摘要——因为有些文章的价值就在原文措辞本身。</li>
+<li>读不到的网站用 Firecrawl connector 补：部分网站 Claude 直接读不到内容时，接 Firecrawl 抓取后再摘要。</li>
+<li>另用同一 Claude Pro 订阅重建了 3 个付费应用的平替（Grammarly、Whispr Flow、Rize），作者自述这些应用原本每年要花 $400+；做法是：说清问题与功能、从一两个核心功能的小版本起步、再逐步加功能，应用跑在本地 Docker 容器里、离线可用，即使取消 Claude 订阅也能继续用。</li>
+<li>教 Claude 干活的新办法：用 Record a Skill 功能录屏演示一遍工作流程（带语音讲解），Claude 据此生成 SKILL.md，写明点哪些按钮、按什么顺序，以后照着做。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>每天 2 小时以上阅读 → 30 分钟播客，作者自述每周省 10 小时以上（作者自述，无逐日计时账本）</li>
+<li>重建 Grammarly、Whispr Flow、Rize 三个应用的平替，作者自述每年省 $400+ 订阅费（作者自述，已实现；应用在数周内若干次会话中陆续建成）</li>
+<li>成本：Claude Pro $20/月；作者自述未付任何额外订阅</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的任务骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>输入：[今天要读的文章链接列表]。</p>
+<p>摘要：[Claude 先读全文] → [按我的项目与兴趣过滤，只留真正相关的部分] → [生成一份覆盖全部来源的摘要]。</p>
+<p>护栏：[写得特别好的文章不要只给摘要，标记出来推荐我读原文]。</p>
+<p>输出：[把摘要发给我的文字转语音应用] → [生成约 30 分钟播客]。</p>
+<p>读不到时：[个别网站读不到内容，接 Firecrawl 抓取后再摘要]。</p>
+<p>教流程：[录屏演示一遍工作流程 + 语音讲解] → [Claude 生成 SKILL.md：点哪些按钮、按什么顺序] → [以后照此执行]。</p>
+<p>平替应用：[说清问题与功能] → [先做一两个核心功能的小版本] → [再逐步加功能] → [跑在本地容器，离线可用]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>国内可用同类文字转语音方案替代 Kokoro 自建应用（如已有 TTS 工具或播客类 App 的摘要朗读），不必照搬自建网页应用；Claude Pro $20/月在国内的订阅与支付方式不同，成本按自己的实际订阅价算；中文文章摘要同样适用，但要注意中文长文的摘要质量与英文不同，先拿 5 篇试效果再铺开；Firecrawl 只是“个别网站读不到时”的补丁，不是必经步骤。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>结果口径：每周省 10+ 小时与每年省 $400+ 均为作者自述，无逐日计时账本或订阅账单截图；“每天 2 小时阅读”是作者作为记者的工作量，普通读者基数不同，省时数不能直接套用。</li>
+<li>时间口径：3 个平替应用是数周内若干次会话陆续建成的，不是单日成果；播客管线本身当天可搭，但平替应用不要按“一天建成”理解。</li>
+<li>适用边界：摘要只适合“找重点、过信息”的阅读；作者自己设了护栏——好文章仍要读原文，摘要不能替代精读；部分网站 Claude 读不到，需另接抓取工具。</li>
+<li>来源口径：原文刊于 How-To Geek 编辑部（具名作者第一人称实测），非作者个人博客；作者身份为该站科技记者。</li>
+<li>与已发布案例的边界：与已发布 2026-10-17-02 订阅审计不同机制（彼为审计取消拿回 $700，此为重建平替省 $400+）；阅读→播客管线为新任务，未见已发布案例覆盖。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://www.howtogeek.com/claude-saves-me-hundreds-of-dollars-and-hours-of-work/</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

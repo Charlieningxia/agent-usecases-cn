@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让智能体按票干活：2 周 72 个已合并 PR，60 个由智能体开出 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 78 · 状态：已实现（产品自建流程；作者自述，未独立审计；未给出省时小时数）</div><h1>让智能体按票干活：2 周 72 个已合并 PR，60 个由智能体开出</h1><div class="meta">作者/出处：Konstantin Beiser<br>原文：<a href="https://medium.com/@konstantin_63771/i-stopped-watching-my-ai-agent-type-so-i-built-relaydev-39a6852559b7" rel="nofollow noopener">https://medium.com/@konstantin_63771/i-stopped-watching-my-ai-agent-type-so-i-built-relaydev-39a6852559b7</a><br>日期：2026-10-18 · 工具：RelayDev、 Claude Code、 GitHub<br>成本：智能体用自己的 Anthropic API key（按量付给 Anthropic，无 token 加价）；RelayDev 平台本身收费，但原文未给平台价，付费前须自行核对 · 耗时：搭一套“写票→排队→出 PR→人工审”的循环约半天；之后每张票的人工时间只剩审 PR 的几分钟</div><h2>一句话</h2>
+<p>别守着终端看智能体打字：作者把待办写成两句话的票、推进队列，智能体在分支上干活并开出 PR，人只负责审 diff 和定“什么叫完成”——用这套循环建 RelayDev 本身，2 周出了 72 个已合并 PR，其中 60 个由智能体开出。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li>把积压写成票：每张票像给同事派活一样，两句话写清要做什么，拖进队列，不再开一对一的实时会话。</li>
+<li>智能体接单干活：Claude 智能体从队列取票，在自己的分支上开发（云端隔离沙箱，或自己 Mac 上的桌面端），做完开 PR，票自动移到 Needs Review。</li>
+<li>人只审 PR：读摘要、看 diff，点 Accept &amp; Merge 或 Request changes（把意见打回给智能体）；两个 PR 改同一批文件时工具帮着解冲突；任何情况下智能体都不直接推主分支。</li>
+<li>用测试集定“完成”：作者先用自然语言写好行为用例（“无套餐用户不能开新 run”“合并 PR 后票移到 Finished”），智能体补漏、写成真实测试并与用例挂钩；审 PR 时只问两件事：是否做了票上说的事、测试是否还过。</li>
+<li>拿自己产品建自己产品：RelayDev 的注册登录、工作区、GitHub 集成、桌面端、账单、用量看板、审计日志、多 PR 合并等功能，大多就是这样从两句话票变成 PR 的；其中 PR #37 一次把 51 个行为用例变成了真实测试。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li>2 周内 72 个已合并 PR，其中 60 个由 RelayDev 智能体开出（已实现，作者自述的仓库数，未独立审计）</li>
+<li>PR #37：一次运行把 51 个行为用例变成真实测试（已实现，作者自述）</li>
+<li>未给出数字：作者没有给出“比原来手写省了多少小时”，也不能把 72 个 PR 直接换算成省时数；这是本篇最主要的口径缺口，成稿时如实标注</li>
+</ul>
+<h2>提示词结构</h2>
+<p>（按原文做法还原的循环骨架，非原文逐字提示词）</p>
+<p>```</p>
+<p>把积压写成票：[两句话任务] + [验收标准写成行为用例]，不写实现细节。</p>
+<p>队列规则：[票→排队→运行→待审→完成]，智能体只开 PR、永不直推主分支。</p>
+<p>审 PR 只问两件事：[是否做了票上说的事] + [测试是否还过]。</p>
+<p>测试集先行：[自然语言行为用例] 由智能体补漏并写成测试，测试挂钩用例。</p>
+<p>冲突与返工：[改同一批文件的 PR 先解冲突] + [Request changes 把意见打回给智能体重做]。</p>
+<p>```</p>
+<h2>中国读者怎么迁移</h2>
+<p>没有 RelayDev 也能搬这个循环：用 GitHub issue / Projects 当票板，Claude Code / Cursor 在分支上干活并开 PR，自己只审 diff；关键是先把“什么叫完成”写成可跑的检查（测试或验收清单），否则排队越多、返工越多。国内网络与模型接入方式不同，成本按自己的 API 账单算，不要照抄任何美元数。</p>
+<h2>风险与限制</h2>
+<ul>
+<li>作者即产品方：RelayDev 是作者自己的产品，本文有产品宣传属性；平台价原文未给，付费前必须自行核对，平台价若超 $50/月须显眼标注。</li>
+<li>成本口径：智能体走自己的 Anthropic key，按量付费，2 周 72 个 PR 的 token 总账原文未给，不能写成“省了多少钱”。</li>
+<li>结果口径：72 个 PR 是产出数不是省时数；作者自述的仓库数未经独立审计；小而清晰的票才适合这套循环，含糊的大需求直接排队只会产出“能合并但不对”的 PR。</li>
+<li>安全底线：PR 门禁是本篇的核心设计，不要为了求快改成“智能体直推主分支”；审 diff 时尤其要看权限、账单、数据删除类改动。</li>
+<li>与已发布案例的边界：与已发布 issue 转 PR 不同——那篇是单条 issue 到 PR，本篇是“票板队列 + 人工审 PR + 行为测试集”的整套工作循环；与 Grandi 子智能体、Moravik claude.md 也不重叠，那两篇讲的是分工与规范文件，本篇讲的是排队与审 PR。</li>
+</ul>
+<h2>原文链接</h2>
+<p>https://medium.com/@konstantin_63771/i-stopped-watching-my-ai-agent-type-so-i-built-relaydev-39a6852559b7</p>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
