@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 AI 首席幕僚比价保险：5 分钟本人时间，3 套出租房省 $980 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 75 · 状态：已节省（作者自述，未经审计；$980 为换保后的保费差额）</div><h1>让 AI 首席幕僚比价保险：5 分钟本人时间，3 套出租房省 $980</h1><div class="meta">作者/出处：Jennifer Beadles<br>原文：<a href="https://addictedtoroi.com/blog/ai-chief-of-staff/" rel="nofollow noopener">https://addictedtoroi.com/blog/ai-chief-of-staff/</a><br>日期：2026-11-12（页面更新日；正文首周为 11 月 8–12 日） · 工具：Claude Code<br>成本：Claude Max $100/月（作者在用，超 $50/月线）；Pro $20/月可起步；AI Chief of Staff Kit $47 一次性（可选捷径，非必需） · 耗时：保险比价单任务约 5 分钟本人时间；整套首席幕僚搭建一下午（步骤 1–6）+ 一周小修</div><h2>一句话</h2>
+<p>美国房产投资人 Jennifer Beadles 用 Claude Code 搭了一个“AI 首席幕僚”Matt，下设 18 个专职助手；其中负责长租的 Paige 帮她把 3 套出租房的保险重新比价，她本人只花约 5 分钟批复、读对比表，换保后省 $980——作者自述，未经审计。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>写一张自我介绍（CLAUDE.md）</strong>：一两页写清自己是谁、有哪些生意（长租、短租、两个 App、博客）、做事偏好（手机办公、回复要短要 plain）；Claude Code 每次会话开始先读它。</li>
+<li><strong>写一份首席幕僚手册（playbook.md）</strong>：每次运行先读 CLAUDE.md、mistakes.md 和任务板；读新邮件、日历和笔记；把每个新需求变成任务，分给合适的助手；没有合适的助手就新建一个助手文件；检查工作质量，不合格打回重做；完工后放到任务板上成一张卡片，只留一个“批准”按钮；最后写 5 行简报（已完成、进行中、需要你决定的唯一一件事）。</li>
+<li><strong>让首席幕僚自己招人</strong>：告诉它“看我过去两周的邮件和日历，决定需要哪些助手，各写一份工作说明”；它招了 18 个助手，各是一份 <code>.claude/agents/</code> 下的 .md 文件（收件箱 Ivy、日历 Cal、管钱 Penny、找浪费 Mabel、长租运营 Paige、短租 Rhett、质检 Vera、把关人 Wren 等）。</li>
+<li><strong>保险比价走 Paige</strong>：她在手机上说一句话——“保险快续了，找本地中介报价，并排对比”；Paige 找本地独立中介、写询价邮件、三家报价陆续回来就并排对比；中标方免赔额不变。她本人约 5 分钟：批准询价请求、读最终对比表。</li>
+<li><strong>定时运行 + 一处收件</strong>：手册每小时在工作时间自动跑一次；所有完工事项汇到一张私人任务板，每项一张卡片，附证据、一个按钮批复。</li>
+<li><strong>硬规则锁死</strong>：CLAUDE.md 与手册里都写明——未经她同意，不发送、不发布、不付款、不购买、不删除、不上线；所有发出去的东西先放卡片上等她点批准。</li>
+<li><strong>错一次记一条规则</strong>：每张卡片她可以留备注，首席幕僚把每条备注记进 mistakes.md，所有助手下次开工前先读；第三天时约四成卡片需要她留备注，之后同类错误不再出现。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li><strong>保险比价省 $980（已节省，作者自述）</strong>：3 套长租出租房重新比价，换保后保费差额 $980，免赔额不变；她本人时间约 5 分钟（批准请求 + 读对比表），之前同样事要花一下午找中介、重复发五封邮件、等报价陆续回来再做表。</li>
+<li><strong>首周 101 个任务、完成 65 个、约 1,500 分钟（作者自记，无独立日志，仅作背景）</strong>：周日到周四五天，团队自记约 25 小时“本来要她自己做的工作”；该数未当标题结果。</li>
+<li><strong>另一实例：一页薄网页改深，省约 90 分钟（作者自述）</strong>：助手 Nico 把一页约 2,800 词重写（加算术、对比表、6 个新问答），Vera 在桌面与手机上测过，她看截图点批准。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li><strong>CLAUDE.md（自我介绍）</strong>：“我是谁 + 我的生意 + 我的规则”，例如“我是房产投资人，经营出租房、两个 App 和一个博客；手机办公，回复要短要 plain；不经我同意不发送、不发布、不付款、不购买、不删除、不上线；不要猜事实，找不到来源就空着；完工才交，不要只交待办清单。”</li>
+<li><strong>首席幕僚手册</strong>：“每次运行：1）读 CLAUDE.md、mistakes.md 和任务板；2）读新邮件、日历和我留的笔记；3）把每个新需求变成任务，分给 <code>.claude/agents/</code> 里合适的助手；4）没有合适的助手就新建一份工作说明；5）检查工作，不合格打回重做；6）完工放任务板成卡片，只留一个批准按钮；7）写 5 行简报：已完成、进行中、需要我决定的唯一一件事。”</li>
+<li><strong>招助手指令</strong>：“看我过去两周的邮件和日历，决定你需要哪些助手，各写一份一页工作说明。”</li>
+<li><strong>比价任务一句话</strong>：“保险快续了，找本地中介报价，并排对比。”（再加一句约束更稳妥：“免赔额不变，只比同等保障的保费；发邮件前先让我批准。”）</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>成本超线，须显眼标注</strong>：作者用 Max $100/月，超 $50/月线；她本人写明 Pro $20/月足够起步、每小时巡查的重度用法才需要 Max。读者先用 Pro 试单任务，不要为“18 个助手”直接上 Max。</li>
+<li><strong>$47 Kit 是作者的付费产品</strong>：文内推的 AI Chief of Staff Kit（23 页图文指南 + 可粘贴提示词）售价 $47 一次性，是作者的引流产品；11 步搭建法全文免费已给全，Kit 只是捷径，非必需。</li>
+<li><strong>数字口径</strong>：$980 是换保后的保费差额，作者自述，未附保单或账单凭证；首周 101 任务/65 完成/约 25 小时为作者自记，无独立计时日志，不得当作实测省时数。</li>
+<li><strong>初期纠错成本</strong>：第三天约四成卡片需要她留备注纠错（地址写错州、不该发的邮件等），mistakes.md 机制是这套做法成立的前提；不设检查员（Vera/Wren）和硬规则就照搬，等于放手让助手直接对外发信。</li>
+<li><strong>能力边界</strong>：原文自己列出——有些网站会屏蔽它；不能代注册、代付款、代点需要本人登录的按钮，这些会以“一个链接 + 具体步骤”的形式交回给她；只看得到已连接的应用。</li>
+<li><strong>中国读者注意</strong>：Claude Code 在国内的访问与订阅方式不同，成本按自己的订阅价算；Gmail/Calendar/Drive 连接器需按自己在用的邮箱与日历替换；保险比价本身只适用于有续保需求的读者，租房、车险同理可套，但“免赔额不变、只比同等保障”是必须加上的约束句。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

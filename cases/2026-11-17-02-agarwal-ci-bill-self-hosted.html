@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能体把 CI 账单推高 5 倍：改自托管跑 CI，10 月账单 $553.44 已实付 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 71 · 状态：已切换（节省待首月账单验证；$553.44/月为 10 月已付账单，不是已省金额）</div><h1>智能体把 CI 账单推高 5 倍：改自托管跑 CI，10 月账单 $553.44 已实付</h1><div class="meta">作者/出处：Arpit Agarwal<br>原文：<a href="https://codemany.com/articles/ai-coding-agents-ci-costs" rel="nofollow noopener">https://codemany.com/articles/ai-coding-agents-ci-costs</a><br>日期：2026-11-17（Show HN 发布日；正文数据截至 2026-11-12） · 工具：Claude Code、 GitHub Actions、 Codemany<br>成本：Codemany $20/月（2 台机器）；硬件一次性约 $700（Linux mini PC）或 $899（Mac mini）；已有闲置机器则硬件 $0 · 耗时：诊断自己的账单约 30 分钟；改自托管跑 CI 约 1 天（含装机与迁移）</div><h2>一句话</h2>
+<p>开发者 Arpit Agarwal 用 Claude Code 写投资应用 Amaltash，智能体全天提交代码、每次提交都跑 CI，GitHub 账单从 2025 年 8 月的 $2.54 涨到 2026 年 10 月的 $553.44（GitHub 计费数据实付）；他已切换到自家机器跑 CI，Linux 小主机约 1.7 个月回本——但切换后首月账单还没出，节省金额尚未验证，不得写成“已省 $553/月”。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>先读账单，不猜</strong>：从 GitHub 计费数据拉出 Amaltash 私有仓库 2025 年 8 月至 2026 年 10 月的逐月账单与分钟数（只算这一个仓库，其他仓库排除在外）；2026 年自托管任务不到分钟数的 0.1%，账单分钟数基本就是全部 CI 分钟数。</li>
+<li><strong>找出涨的原因</strong>：智能体全天开分支、推小修、等测试、再推，多个智能体并行；2026 年 7 月 13 日至 11 月 12 日共 63,925 次 workflow 运行（约每天 530 次），很多是 1 分钟内的小检查；GitHub 按每 job 向上取整到整分钟，抽样显示取整让计费分钟数多了约三分之一（作者估算）。</li>
+<li><strong>分开算 Linux 与 macOS</strong>：10 月 Linux 76,247 分钟（97.7%），macOS 1,797 分钟（2.3%）却占费用的 19.6%（macOS 每分钟 $0.062，约 Linux $0.006 的 10 倍）。</li>
+<li><strong>算回本公式再决定</strong>：回本月数 = 机器价格 ÷（月 CI 账单 − $20）；Linux mini PC（MINISFORUM UM870，32GB/1TB，约 $700）替掉 $438.29 的 Linux 部分，约 1.7 个月回本；Mac mini（$899）替掉 $111.41 的 macOS 部分，约 9.8 个月；两台一起约 $1,600，约 3.0 个月回本；12 个月累计：GitHub 托管约 $6,596，自家机器约 $1,839。</li>
+<li><strong>改自托管</strong>：用自己做的 Codemany 在自家 Mac/Linux 机器上跑 GitHub Actions——每个 job 一个全新 runner，跑完删文件夹；Linux 上可用 KVM 给每个 job 独立虚拟机；缓存、工具链和包镜像留在本机，安装与检出热启动；Codemany $20/月管 2 台机器，不按分钟收费。</li>
+<li><strong>留好退路</strong>：他写明哪些情况仍该用托管 runner——CI 量小、没有闲置机器、偶尔需要远超自家机器容量的突发并发、需要 Windows（Codemany 只跑 Mac 与 Linux）。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li><strong>10 月账单 $553.44 已实付（GitHub 计费数据）</strong>：2025 年 8 月 $2.54 → 2026 年 1 月 $75.79 → 7 月 $433.98 → 10 月 $553.44（标价 $573.13）；Linux 分钟数从 1 月约 15,000 涨到 10 月 76,247，约 5 倍；2026 年 1–10 月分钟数平均每月涨约 20%。</li>
+<li><strong>已切换到自家机器跑 CI（已完成迁移）</strong>：作者写明“现在我在自己拥有的机器上跑 CI”；但切换后首月账单尚未出，实际节省金额未验证——只可写“已切换”，不可写“每月已省 $553”。</li>
+<li><strong>回本测算（作者计算，非实测）</strong>：Linux 小主机约 1.7 个月回本、Mac mini 约 9.8 个月、两台一起约 3.0 个月；电费、装机时间与维修未计入。</li>
+<li><strong>增长预测（作者明确标注为推测，非数据）</strong>：按每月 10% 涨幅（实际增速的一半）估算，2027 年 6 月账单约 $1,200/月；10 人团队按 4–20 倍量估算为 $2,200–$11,000/月（假设，非数据）。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li><strong>诊断自己账单的提问</strong>：“把过去 12 个月 GitHub Actions 的账单和分钟数按月列出来，分 Linux 和 macOS；算一下每分钟多少钱、哪个仓库、哪个 workflow 占大头；取整到分钟多收了多少？”</li>
+<li><strong>回本判断公式</strong>：“回本月数 = 机器价格 ÷（月 CI 账单 − $20）；已有闲置机器价格按 $0 算，第一个月就省。”</li>
+<li><strong>给智能体的降 CI 指令</strong>（作者做法的反向启示）：“小修合并成一批再推；测试只跑关键项时要说明（作者承认不推荐——为省 CI 钱砍测试是坏交易）；给 workflow 设超时与并发上限。”</li>
+<li><strong>自托管 runner 的验收清单</strong>：“每个 job 全新 runner、跑完清文件夹；缓存与工具链留在本机；Windows job 留在托管 runner；突发大并发仍回托管。”</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>自推产品，必须披露</strong>：Codemany 是作者自己的产品（$20/月，2 台机器），整篇文章的落点是它；读者也可以用 GitHub 官方自托管 runner（免费，无 Codemany 的管理层）或其他同类工具达到同样目的，不必买他的产品。</li>
+<li><strong>节省尚未验证</strong>：切换后首月账单未出，“每月省 $550+”只是按 10 月账单算出的推测；草稿标题与正文一律写“已切换、节省待验证”，不得写成已实现节省。</li>
+<li><strong>数字口径</strong>：Show HN 帖文称 $582，与正文表格 $553.44 对不上，以正文 GitHub 计费数据为准；“取整多收约三分之一”为作者抽样估算；2027 年 6 月约 $1,200/月与 10 人团队 $2,200–$11,000/月均为作者标注的推测/假设。</li>
+<li><strong>GitHub 收费政策可能变</strong>：2025 年 12 月 16 日 GitHub 宣布过自托管 runner 每分钟 $0.002 的收费，后推迟、截至 2026 年 11 月 12 日未执行；若恢复，按 10 月分钟数约 $156/月，仍远低于托管账单，但回本月数要重算。</li>
+<li><strong>门槛</strong>：需要一台常开的机器与装机维护能力；CI 量小的仓库回本很慢；Windows job 不适用；电费、装机时间与维修未计入回本公式；容量按内存/CPU/磁盘算，忙时一台机器可能不够。</li>
+<li><strong>中国读者注意</strong>：GitHub Actions 对公开仓库标准 runner 免费，账单问题主要出在私有仓库；先按步骤 1 拉自己的账单对数，月账单低于约 $50 时不必折腾自托管。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

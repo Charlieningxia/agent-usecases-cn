@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 Grok Bot 搬 5 个 WordPress 站：托管费 $3,100/年 → $996/年 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">省钱账单 · 评分 71 · 状态：已切换（年省 $2,104 为按新价推算的未来年省，非已到账现金；Kinsta 按比例退款已到账，金额原文未给）</div><h1>让 Grok Bot 搬 5 个 WordPress 站：托管费 $3,100/年 → $996/年</h1><div class="meta">作者/出处：Harsh Agrawal<br>原文：<a href="https://shoutmeloud.com/kinsta-to-rocketnet-grok-bot-migration.html" rel="nofollow noopener">https://shoutmeloud.com/kinsta-to-rocketnet-grok-bot-migration.html</a><br>日期：2026-11-17 · 工具：Grok Bot、 Rocket.net Agency Tier 1、 Kinsta、 Cloudflare<br>成本：Rocket.net Agency Tier 1 $996/年（首月 $1，用 launch 促销码）；Grok Bot 用的是哪档订阅、成本多少，原文未给，成稿不写总成本 · 耗时：约 36 小时（智能体后台执行；人工只做几次点按确认：批 $1 付款、批 DNS 切换、最后一步亲自输 Kinsta 账号密码确认取消）</div><h2>一句话</h2>
+<p>博客主 Harsh Agrawal 在 Kinsta 上跑 5 个 WordPress 站、一年托管费 $3,100，他没自己动手搬站，而是让 Grok Bot 在 36 小时内全程代办：注册新主机、谈判免掉 $240/年附加费、零停机切 DNS、取消旧套餐并拿到按比例退款——年费降到 $996，按新价推算一年省 $2,104。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>先问能不能全包</strong>：周日早上语音发给 Grok Bot——5 个站都在 Kinsta、一年约 $3,000、总共不到 50GB，想换到 Rocket.net（对方提供免费迁移），问能不能全程代办。Grok Bot 回复可以，用的全是它自己云端电脑上的真实浏览器、终端和加密凭证库（Vault）。</li>
+<li><strong>先审计，再动手</strong>：Grok Bot 先查了域名 DNS 与响应头，确认 5 个站已用作者自己的 Cloudflare 解析、TTL 只有 5 分钟，邮箱 MX 记录不会受影响；又发现 Rocket.net 定价页上 Agency Tier 1 与 Business 档同价 $996/年，但 Agency 档给 50GB 而不是 40GB，直接选了 Agency 档，并用 <code>launch</code> 促销码先按月付 $1 试用。</li>
+<li><strong>买主机只批一次</strong>：Grok Bot 把公司账单信息与一张美元 Visa 卡存进 Vault，填表注册、生成高强度密码，到付款一步弹出审批卡，作者点一下“Approve $1.00 today”就完成。</li>
+<li><strong>10 分钟备齐 5 个站的迁移材料</strong>：Grok Bot 登录 MyKinsta，逐个解锁 SFTP/SSH 凭证；用 WP-CLI 在 5 个站上各建一个临时管理员账号 <code>rocketmigration</code>；顺手记下各站的特殊点（ShoutMeLoud 的 Easy Digital Downloads、ShoutUniversity 的 LearnDash 与 WooCommerce、Weglot 多语言规则），整理成一张迁移单交给 Rocket.net 的免费人工迁移团队，并设了每 2 小时自动查一次进度的后台任务。</li>
+<li><strong>谈判免掉 $240/年附加费</strong>：对方迁移专员 Clara 说两个重定向根域名各要 $10/月附加费。Grok Bot 回复：Agency 档含 10 个站点名额只用了 5 个，能否拿 2 个闲置名额换域名别名、$0 附加费；同时备好零成本后手（Cloudflare 免费重定向规则）。2 小时后对方账单团队同意，作者只回了六个词“Figure that out and do it”，Grok Bot 确认换位、配好 301 规则并验证。</li>
+<li><strong>零停机切 DNS，再取消旧套餐</strong>：Grok Bot 用 Cloudflare 官方连接器一键 OAuth 授权（没输主密码），先导出全部 DNS 记录做备份，再按 Rocket.net 的 Go Live 向导加好 SSL 预验证 TXT 记录，等证书生效后才换 <code>@</code>、<code>www</code> 与别名 CNAME，邮箱 MX 记录原样不动；逐个域名测 HTTPS 200 与 301 正常后，删掉自己的巡查任务。最后 Grok Bot 以新建的独立 Kinsta 子账号（没用作者主账号）与客服交涉取消套餐；只有最后一步 Kinsta 要求公司负责人亲自输密码确认，作者自己点了那一下，Kinsta 随即取消并发出按比例退款。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li><strong>托管年费 $3,100 → $996（已切换，按新价推算年省 $2,104，约 68%）</strong>：5 个站约 28GB，36 小时内完成迁移；首月只付 $1。<strong>注意：$2,104 是按新旧年费之差推算的未来一年节省，不是已到账的现金。</strong></li>
+<li><strong>附加费谈判免掉 $240/年（已确认）</strong>：两个重定向根域名本来各 $10/月，对方账单团队同意用闲置站点名额换，$0 附加费。</li>
+<li><strong>Kinsta 按比例退款已到账（金额原文未给）</strong>：作者写“金额很快就到账了”，但没给具体数字，成稿不得编造退款金额。</li>
+<li><strong>零停机（作者自述）</strong>：5 个站切 DNS 时无停机，邮箱未受影响；作者称这是他拖了几个月的活，交给智能体后一个周末办完。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li><strong>一句话委托（作者原话结构）</strong>：“我的 WordPress 站在 Kinsta，一年约 $3,000，不到 50GB，想换个不用自己管服务器的地方。Rocket.net 是备选之一，他们提供免费迁移。我只需要注册、给他们 WordPress 站与 Kinsta 登录，他们负责其余。你建议怎么做？能全包吗？”</li>
+<li><strong>谈判指令（作者原话结构）</strong>：“Figure that out and do it.”——只在对方已原则同意换位后才放手让智能体敲定细节；谈判前先让智能体备好零成本后手（闲置名额换位 + Cloudflare 免费重定向），不是空手去谈。</li>
+<li><strong>全程通用的省钱指令（作者做法提炼）</strong>：让智能体“永远去拿最优价/最优档”——比价时不只看默认档，逐个点开同价的不同套餐页比容量（Agency 档同价多 10GB）；先按月付 $1 试用、确认无误再转年付。</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>$2,104/年是推算数，不是已到账现金</strong>：已到账的只有 Kinsta 按比例退款，金额未给；标题与正文不得写成“已省 $2,104”。该口径与待审批的 Agarwal“已切换、节省待首月账单验证”案同类，是否算已验证位待 Xiao 裁决；若 Xiao 裁定不算，本案须同步降级处理。</li>
+<li><strong>作者利益关联必须披露</strong>：Harsh Agrawal 是联盟营销博主（ShoutMeLoud 创始人），文内含 Rocket.net 推广链接（“Click Here to Try Rocket.net for $1 Today”）；他站内长期推荐 Kinsta，本次转推 Rocket.net。</li>
+<li><strong>本文本身由 Grok Bot 代笔</strong>：作者称“这篇文章也是用 Grok Bot 写的，每句话事后都由我逐字读过、编辑过”。</li>
+<li><strong>Grok Bot 档位价未给</strong>：用的是哪档订阅、成本多少原文未说明；读者照做前须先查 Grok Bot 当期定价，成稿不得编造成本。</li>
+<li><strong>安全红线（作者本人列的 5 条，照抄进成稿）</strong>：用临时/虚拟卡并设消费上限；迁移完立即轮换 Kinsta、新主机与 WordPress 管理员密码；删掉临时管理员账号 <code>rocketmigration</code>；能走 OAuth 就不给主密码；绝不在公开提示词里贴密码与卡号，一律走加密 Vault。另：取消 Kinsta 的最后一步必须由账号负责人在场输密码，智能体代办不了。</li>
+<li><strong>适用面窄</strong>：只适用于多站 WordPress 且总容量在套餐内（本案 28GB 用 50GB 档）；单站或小站读者直接按月付更划算，不必照搬 Agency 档；Rocket.net 的 $1 首月是限时促销，价格以读者下单时为准。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

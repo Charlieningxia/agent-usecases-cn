@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 Claude Code 当 SEO 工程师：6 个月拿下 407K 次 Google 点击 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">内容营销 · 评分 71 · 状态：已实现（作者自述，Search Console 口径，未经独立核实；无收入数）</div><h1>让 Claude Code 当 SEO 工程师：6 个月拿下 407K 次 Google 点击</h1><div class="meta">作者/出处：Mofidul Islam<br>原文：<a href="https://medium.com/@iammofidul/i-got-407k-google-clicks-by-making-claude-code-an-seo-engineer-2971b4b4eb4b" rel="nofollow noopener">https://medium.com/@iammofidul/i-got-407k-google-clicks-by-making-claude-code-an-seo-engineer-2971b4b4eb4b</a><br>日期：2026-11-20 · 工具：Claude Code、 Google Search Console、 MCP<br>成本：Claude Code 订阅档位原文未给；无其他工具费用，成稿不得写成 $20 定价 · 耗时：循环本身一天可搭起来；见效需数月（本案 6 个月），不能承诺 1 天见效</div><h2>一句话</h2>
+<p>独立开发者 Mofidul Islam 白天有全职工作，晚上用 Claude Code 给自己的应用网站跑 SEO——不是让它写文章，而是让它按一套写死的规则循环办事：先查真实搜索数据再决定建页还是改页、上线前过硬门槛、上线后查线上实页、等数据再决定保留还是回滚，6 个月做到 407K 次 Google 点击。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>先接真实数据</strong>：把 Google Search Console 通过 MCP 服务器接进 Claude Code，让它能直接查自己网站的真实搜索数据。没有这一步，智能体只是在猜。</li>
+<li><strong>建页之前先过意图核查</strong>：每个新 SEO 页面动工前，Claude Code 必须先从 Search Console 数据里回答四个问题：本站哪个 URL 已在为这个查询排名？这个 URL 已从哪些搜索拿到点击？新关键词是新意图，还是已有需求的另一种说法？新页面会不会跟已有效果的页面抢排名？然后只能给出一个判定：<strong>CREATE（建新页）/ IMPROVE EXISTING（改现有页）/ REJECT（不做）</strong>。作者说这一步是关键差别——很多“新建页”的想法其实是“改好已有页”的想法。</li>
+<li><strong>让它审计，不只让它写</strong>：页面建好后，用 Claude Code 里的 SEO 审计与关键词研究技能审一遍：搜索意图是否对得上、站内有无重复关键词目标、标题/meta/H1 是否同题、canonical 标签、可索引性、内链、内容是否单薄重复、有没有进 sitemap、有没有承诺产品做不到的功能、有无性能回退。其中“承诺了产品没有的功能”要单拎出来查——AI 很爱给产品加它没有的功能，排上去也会让点进来的人失望。</li>
+<li><strong>上线前过硬门槛，不过不发</strong>：把重要检查写成硬规则，页面必须全部通过才能上线：意图唯一、没有已有 URL 占着这个意图、标题唯一且 meta 有用、H1/canonical/robots 正确、有相关内链且不是孤儿页、进了 sitemap、无单薄重复生成内容、每句承诺都与产品实际相符、无明显性能回退。作者原话：不过门槛就不上线，不是“先上线以后再修”。</li>
+<li><strong>上线后查线上实页，不查代码</strong>：每次部署后，Claude Code 检查的是真实跑在线上的页面——HTTP 响应、渲染后的标题与 meta、canonical 与 robots 标签、H1、sitemap、内链、能不能被抓取索引。作者说这步最容易低估：源码看着全对，实际 served 的 HTML 可能因为构建、缓存、框架细节而不一样。只查代码，等于只查了自己“想发什么”。</li>
+<li><strong>让 Search Console 当裁判</strong>：部署后等有意义的数据趋势再下结论，不为一天的波动慌着发新页；流量掉了就自上而下查：整站 → 页面 → 查询 → 索引/canonical → 最近改动。每次改动只给三个 verdict 之一：<strong>KEEP（保留）/ ITERATE（迭代）/ REVERT（回滚）</strong>。作者说回滚被低估了：改动变差了就滚回去，这是数据，不是失败。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li><strong>6 个月：407,000 次点击、3.25M 次展示、12.5% 点击率、平均排名 8（作者自述，Search Console 口径，未经独立核实）</strong>：作者称 6 个月前网站每天只有几百次点击，上周每天超过 9,000 次。</li>
+<li><strong>最近 28 天：131,000 次点击、917K 次展示、14.3% 点击率（作者自述，Search Console 口径，未经独立核实）</strong>：日点击从 11 月初约 3,000 涨到 11 月中旬 9,000+。</li>
+<li><strong>无广告、无 SEO 机构、无内容团队（作者自述）</strong>：作者称自己是全职工作的独立开发者，晚上做这件事。</li>
+<li><strong>无收入数</strong>：结果是流量与曝光数字，原文没有给出收入、转化或注册数，成稿不得把点击写成收入。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li><strong>意图核查指令（原文规则骨架，作者明言可直接改编）</strong>：“在创建任何 SEO 页面之前：1. 在 Search Console 里查目标关键词及相近变体；2. 列出本站所有已因此获得展示的 URL；3. 判断搜索意图是新的，还是已有 URL 已覆盖的；4. 只能输出一个决定：CREATE（新意图、无归属页）/ IMPROVE EXISTING（已有 URL 覆盖该意图）/ REJECT（无真实需求，或会与现有页竞争）；5. 用数据解释这个决定。在此之前不要写任何页面。”</li>
+<li><strong>上线门槛清单（作者做法提炼）</strong>：把上面第 4 步的 9 项检查写成一份固定清单，交给智能体逐项打勾：意图唯一、无归属冲突、标题/meta/H1 对齐、canonical 与 robots 正确、有内链无孤儿页、进 sitemap、无单薄重复内容、承诺与产品一致、无性能回退；任一项不过就不部署。</li>
+<li><strong>流量下滑排查指令（作者做法提炼）</strong>：“先判断是整站还是单个页面、单个查询还是多个查询，再查索引/canonical、最后对最近改动。每次改动只给 KEEP / ITERATE / REVERT 三个结论之一。”</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>数字未经独立核实</strong>：407K/131K 均为作者自述的 Search Console 口径；原文配的 28 天 Search Console 截图在抓取文本中仅为占位符、未实际可见；作者的应用未具名，无法独立核查是哪家网站。成稿必须全程带“作者自述，未经独立核实”状态，不得写成已证实。</li>
+<li><strong>见效需数月</strong>：循环本身一天能搭起来，但本案花了 6 个月才从每天几百点击涨到 9,000+；与已发布 Vaultaire SEO 循环案同一口径，成稿须写明不能承诺 1 天见效。</li>
+<li><strong>成本未给</strong>：Claude Code 用的是哪档订阅、6 个月花了多少钱原文未说明；成稿不得编造价格，读者照做前须先查当期定价。</li>
+<li><strong>无完整提示词与配置</strong>：原文只给了意图核查规则骨架，没有完整提示词、没有 MCP 配置、没有仓库链接；读者须按自己网站情况补配置，成稿须说明提示词结构为原文规则骨架改编、非全文照抄。</li>
+<li><strong>中国读者迁移</strong>：Google Search Console 在国内不可直接用，须换成可及的数据源（如百度搜索资源平台、微信搜狗指数或自家站内搜索日志）；CREATE/IMPROVE/REJECT 的意图核查逻辑本身可以照搬，数据源要换。</li>
+<li><strong>与已发布案不撞题</strong>：已发布 2026-10-23-04-seo-workflow-409（Pospielova）主线是“换掉三个 SEO 工具省 $409/月”，本案主线是“智能体跑 SEO 循环涨流量”，任务与结果不同。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>

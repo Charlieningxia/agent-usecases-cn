@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>让 Claude Code 量日志砍上下文：token/次降 46%，同样额度多干 1.9 倍活 · AI 智能体实操用例库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="../index.html">AI 智能体实操用例库</a>
+  <nav><a href="../index.html">案例</a> · <a href="../newsletter-001.html">邮件周刊</a> · <a href="../sponsor.html">赞助</a> · <a href="https://agentusecases-cn.beehiiv.com/subscribe" target="_blank" rel="noopener">免费订阅</a></nav>
+  <p class="tagline">真人真做过的 AI 智能体案例：做法、提示词结构、成本、结果状态，全部链回一手出处。</p>
+</header>
+<main>
+<div class="meta">编程搭建 · 评分 81 · 状态：已验证（作者实测前后对比；1.9 倍为 token 口径——每 1 亿 token 可调用次数 308→571 次，非产出件数；单文件夹测量）</div><h1>让 Claude Code 量日志砍上下文：token/次降 46%，同样额度多干 1.9 倍活</h1><div class="meta">作者/出处：Jumi Jeong<br>原文：<a href="https://candoit-jumi.medium.com/work-log-8-how-do-you-get-1-9x-more-work-out-of-ai-with-the-same-tokens-befe39540b18" rel="nofollow noopener">https://candoit-jumi.medium.com/work-log-8-how-do-you-get-1-9x-more-work-out-of-ai-with-the-same-tokens-befe39540b18</a><br>日期：2026-11-17 · 工具：Claude Code、 Headroom（免费开源）、 会话日志<br>成本：10 项修复本身 $0（Headroom 免费开源）；作者 Claude 订阅档位价原文未给，成稿不写总成本 · 耗时：每项修复分钟级，全套 10 项约 1 天可做完；1.9 倍是 9–11 月两月迭代后 11 月 2 日的测量结果，不是 30 分钟见效数</div><h2>一句话</h2>
+<p>AI 产品设计师 Jumi Jeong 天天撞上 Claude Code 用量上限，她不猜、不换套餐，而是用量日志量出 token 都浪费在哪，再逐项砍掉：两月后每次调用 token 从 325,000 降到 175,000（-46%），同样 1 亿 token 能调用 571 次而不是 308 次——作者实测前后对比，单文件夹测量。</p>
+<h2>原作者怎么做的</h2>
+<ol>
+<li><strong>先量，不猜</strong>：用会话日志量 token 都去哪了。一开始她猜 Figma 文件最费，实测最大头是终端命令（占 31%）。</li>
+<li><strong>砍掉习惯性 cd（9 月）</strong>：AI 每条终端命令前习惯性加 <code>cd</code>，两周光这串字符就 620,000 个。指令里加一行&quot;命令前不要加 cd&quot;，带 cd 的命令从 84% 降到 7.8%。</li>
+<li><strong>把整读文件的活交给 helper AI（9 月）</strong>：主对话读整个 Figma 文件会一直堆在上下文里，改由 helper AI 单独读、只回结果，成本降 11%。</li>
+<li><strong>提前自动摘要（10 月，效果最大）</strong>：记忆索引 MEMORY.md 长到 25.8KB 超限，AI 读不到末尾行也不报错；把 64 条偶尔才查的记忆移到按需读取的 skill，索引压到 18.5KB。长对话是最大头——每次回答都要从头重读整个对话，常超 220,000 token；把自动摘要点提前（<code>/autocompact 400000</code>），最长对话重读量从 690,000 降到 330,000 token。</li>
+<li><strong>更新工作文件夹（10 月）</strong>：团队已把 AGENTS.md 从 45,000 字节精简到 2,500 字节，但她本地没拉 307 次更新，自己每次读的是 18 倍长的旧版；<code>git pull</code> 后新开会话读取量从 71,000 降到 49,000 token。</li>
+<li><strong>设 200k 交接 hook</strong>：对话超 200,000 token 时停一次，写一段交接提示词贴进新会话；超 200k 的调用占比从 51% 降到 37%。</li>
+<li><strong>工具回包只读要的字段</strong>：查 Notion 改按属性读不读整页，单次从 13,000 字符降到 1,766 字符。</li>
+<li><strong>关掉不用的 skill 与连接器</strong>：各连接器 1,000–2,000 token，效果小但照做；60 天没用过的 skill 移走备份不删除。</li>
+<li><strong>长假前手动收尾</strong>：长休息前用 <code>/compact</code> 摘要或关掉会话（这一项她没量效果）。</li>
+<li><strong>一周后再量一次</strong>：11 月 2 日复测两月成果，确认 token/次 325,000→175,000、每周调用数 +61%。</li>
+</ol>
+<h2>结果</h2>
+<ul>
+<li><strong>token/次降 46%（已验证，作者实测）</strong>：325,000→175,000；每 1 亿 token 可调用次数 308→571，即同样额度下 1.9 倍工作量；每周 AI 调用数 +61%。</li>
+<li><strong>等限等待时间未变（作者实测，如实记录）</strong>：撞限后等待仍是每周 5 次、7.9 小时——因为她把省下的额度拿去接了更多长任务（同周调用量涨 1.6 倍）；&quot;若无优化等待将达 15.8 小时、额度提前约 1 天用完&quot;是作者标注的假设推算（&quot;Assuming the limit fills in proportion&quot;），不是实测。</li>
+<li><strong>两处失败如实记录</strong>：9 月 3 日记下&quot;关掉 99 个 60 天没用过的 skill&quot;，一个多月后复查发现根本没关成，省多少没法量；待办重载一度让每次调用多读约 3,300 token，设上限后压回，只比原来高约 300 token。</li>
+<li><strong>两处小效果她没跟风</strong>：Headroom 压缩命令输出只省 5–10%；网传&quot;状态栏三词文案占 15–26% token&quot;，她自己日志里实测不到 2%，没装屏蔽脚本。</li>
+<li><strong>一个教训</strong>：9 月她曾下结论&quot;长对话不用缩短&quot;，10 月复测发现这正是最大头——&quot;每次砍掉一个，下一个问题才冒出来&quot;，得持续量、持续改。新模型 Claude Fable 5.2 出来后她没给新模型设自动摘要，超 200k 的调用占比又从 40% 以下弹回一半，靠复测量才发现。</li>
+</ul>
+<h2>提示词结构</h2>
+<ul>
+<li><strong>先量后改的测量提示词（原文可复制，分三步，作者原话结构）</strong>：&quot;我想砍这个文件夹的 Claude Code token 用量。按顺序做，每步结果列一张表，没我说&#x27;继续&#x27;不许进入下一步。第一步只量不改：读过去 7 天本文件夹的会话日志（~/.claude/projects/ 下本文件夹名，别混进其他文件夹），量 7 项——缓存命中占比；每次调用对话规模的中位数与前 10%、超 200k 的占比、压缩次数；休息超 1 小时后首请求的缓存写入占比；新会话首次调用读了多少、其中指令文件（CLAUDE.md、AGENTS.md、MEMORY.md）与 hook 输出各占多少、同一内容是否出现在两个文件里；本文件夹落后主分支多少提交；各工具回包堆了多少字符、最大的那个工具的平均大小与次数；60 天没调用过的 skill 与 30 天没用过的连接器。表右侧每项加一句&#x27;能砍吗&#x27;，有旧测量就并排对比。第二步只改第一步说能砍的，按效果顺序逐项改，每项先报改法、我点头才改：落后就 git pull（有未提交改动就停下问我）；指令与记忆文件里删掉每条规则的来历故事与实测数字、只留规则标题链接、改前备份并报备份路径与砍掉字节数；没用过的 skill 移进备份文件夹不删除；没用过的连接器只列清单我自己关；回包最大的工具找个少带回的办法、只建议不自动改；Stop hook 里加长会话检查——上次主调用首次超 200k 时停一次、回一段可贴进新会话的交接提示词，之后每 100k 再停一次、不自动开新智能体、改前先写测试跑通再报结果；需要跨压缩存活的东西在 CLAUDE.md 里加不超过 5 行的&#x27;# Compact instructions&#x27;，仍需要的 hook 加上 compact 匹配并把输出压到约 3,000 字符、改前后 token/次并排对比。第三步列我自己要做的事，至少两件：每模型单独输一次 /autocompact 400000；长休息前 /compact 或关会话。然后定个日期，一周后再跑一遍第一步。&quot;</li>
+<li><strong>效果排序的 10 项修复清单</strong>：自动摘要点提前（<code>/autocompact 400000</code>，每模型单独设）→ <code>git pull</code> 更新工作文件夹 → 指令与记忆文件去故事、只留规则 → 记忆索引超限就拆分 → 指令加&quot;命令前不要加 cd&quot; → 整读文件的活交 helper AI → 工具回包只读要的字段 → 关掉不用的 skill 与连接器 → 200k 交接 hook → 长假前 <code>/compact</code> 或关会话。</li>
+</ul>
+<h2>风险与限制</h2>
+<ul>
+<li><strong>标题与数字口径</strong>：不得写&quot;省了 X 小时/美元&quot;——等限等待时间未变（每周 7.9 小时），15.8 小时是假设推算；1.9 倍是 token 口径（每 1 亿 token 调用 308→571 次），不是产出件数；单文件夹测量，别家文件夹数字会不同。</li>
+<li><strong>订阅档位价未给</strong>：作者没写自己用的 Claude 订阅档位与价格，修复本身 $0 不等于总成本 $0；读者按自己的订阅价算。</li>
+<li><strong>AI 协助写作已披露</strong>：文首自述由 AI 写作助手协助起草、英文版由韩文原版经 Claude 翻译；经历与决定是作者本人的，测量数字是她自己的日志。</li>
+<li><strong>不是 30 分钟见效</strong>：每项修复本身分钟级，但 1.9 倍是 9–11 月两月持续量、改、再量的累计结果；新模型要单独设自动摘要，否则省下的额度会悄悄弹回去。</li>
+<li><strong>中国读者注意</strong>：Claude Code 在国内的访问与订阅方式不同，成本按自己的订阅价算；会话日志路径（~/.claude/projects/）与 hook 写法照原文，Notion、Figma、Headroom 均可按自己在用的工具替换；&quot;先量自己日志再动手&quot;是这篇最值得搬的方法，照抄清单而不量自己的日志，砍不到最大头。</li>
+</ul>
+</main>
+<footer>每条案例均标注结果状态与一手出处；自报数字未经审计的会明确写明。发布、发邮件、联系赞助商均经人工确认。</footer>
+</body>
+</html>
